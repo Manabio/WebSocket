@@ -7,7 +7,7 @@ const socketIO = require('socket.io');
 const app = express();
 const server = http.Server(app);
 const io = socketIO(server);
-const yargs = require('yargs').argv;
+//const yargs = require('yargs').argv;
 
 
 const FIELD_WIDTH = 1000, FIELD_HEIGHT = 1000;
@@ -216,7 +216,7 @@ app.get('/', (request, response) => {
   response.sendFile(path.join(__dirname, '/static/3d.html'));
 });
 
-const port = parseInt(yargs.port) || 3000;
+//const port = parseInt(yargs.port) || 3000;
 server.listen(port, () => {
   console.log(`Starting server on port ${port}`);
 });
