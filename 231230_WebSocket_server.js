@@ -5,7 +5,7 @@ const http = require('http');
 const path = require('path');
 const socketIO = require('socket.io');
 const app = express();
-const server = "https://websocket-test-8ois.onrender.com";
+const server = http.Server(app);
 const io = socketIO(server);
 
 
