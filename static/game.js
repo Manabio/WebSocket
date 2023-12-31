@@ -1,7 +1,7 @@
 'use strict';
 
-//const socket = io();
-const socket = io("wss://websocket-test-8ois.onrender.com:3000");
+const socket = io();
+//const socket = io("wss://websocket-test-8ois.onrender.com:3000");
 const canvas = $('#canvas-2d')[0];
 const context = canvas.getContext('2d');
 const playerImage = $('#player-image')[0];
