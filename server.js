@@ -159,7 +159,7 @@ io.on('connection', function(socket) {
     socket.on('game-start', (config) => {
         player = new Player({
             socketId: socket.id,
-            nickname: config.nickname,
+//            nickname: config.nickname,
         });
         players[player.id] = player;
     });
