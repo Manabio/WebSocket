@@ -68,7 +68,7 @@ setInterval(function() {
 app.use('/static', express.static(__dirname + '/static'));
 
 app.get('/', (request, response) => {
-  response.sendFile(path.join(__dirname, '/static/2d.html'));
+  response.sendFile(path.join(__dirname, '/static/index.html'));
 });
 
 server.listen(3000, function() {
