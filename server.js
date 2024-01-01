@@ -1,5 +1,6 @@
 'use strict';
 
+// グローバル変数
 const express = require('express');
 const http = require('http');
 const path = require('path');
@@ -8,8 +9,9 @@ const app = express();
 const server = http.Server(app);
 const io = socketIO(server);
 
-
 const FIELD_WIDTH = 1000, FIELD_HEIGHT = 1000;
+
+// ゲーム クラス
 class GameObject{
     constructor(obj={}){
         this.id = Math.floor(Math.random()*1000000000);
@@ -55,6 +57,7 @@ class GameObject{
     }
 };
 
+// プレイヤー クラス（= Gameクラスの子宣言）
 class Player extends GameObject{
     constructor(obj={}){
         super(obj);
@@ -101,6 +104,8 @@ class Player extends GameObject{
         return Object.assign(super.toJSON(), {health: this.health, maxHealth: this.maxHealth, socketId: this.socketId, point: this.point, nickname: this.nickname});
     }
 };
+
+// 弾 クラス（= Gameクラスの子宣言）
 class Bullet extends GameObject{
     constructor(obj){
         super(obj);
@@ -113,6 +118,8 @@ class Bullet extends GameObject{
         delete bullets[this.id];
     }
 };
+
+// ボットプレイヤー（= プライヤークラスの子宣言）
 class BotPlayer extends Player{
     constructor(obj){
         super(obj);
@@ -134,13 +141,17 @@ class BotPlayer extends Player{
         }, 3000);
     }
 };
+
+// 壁 クラス（= Gameクラスの子宣言）
 class Wall extends GameObject{
 };
 
-let players = {};
-let bullets = {};
-let walls = {};
+// グローバル 変数（オブジェクト）
+let players = {}; // プレイヤー
+let bullets = {}; // 弾
+let walls = {};   // 壁
 
+// 壁（200px*50px）３つ作成
 for(let i=0; i<3; i++){
     const wall = new Wall({
             x: Math.random() * FIELD_WIDTH,
@@ -151,9 +162,11 @@ for(let i=0; i<3; i++){
     walls[wall.id] = wall;
 }
 
+// ボット 生成
 const bot = new BotPlayer({nickname: 'bot'});
 players[bot.id] = bot;
 
+// socket.io
 io.on('connection', function(socket) {
     let player = null;
     socket.on('game-start', (config) => {
@@ -179,6 +192,7 @@ io.on('connection', function(socket) {
     });
 });
 
+// フレーム処理（30fps）
 setInterval(() => {
     Object.values(players).forEach((player) => {
         const movement = player.movement;
@@ -218,13 +232,14 @@ setInterval(() => {
     io.sockets.emit('state', players, bullets, walls);
 }, 1000/30);
 
-
+// path 適正化
 app.use('/static', express.static(__dirname + '/static'));
 
 app.get('/', (request, response) => {
   response.sendFile(path.join(__dirname, '/static/index.html'));
 });
 
+// ポート番号：3000で待機
 server.listen(3000, function() {
   console.log('Starting server on port 3000');
 });
