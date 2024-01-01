@@ -11,7 +11,7 @@
 		<td valign="top">
 			<table id="data_table">
 				<tr>
-					<td><img src="./pics/manabio-logo.png"></td>
+					<td><img src="../pics/manabio-logo.png"></td>
 					<td nowrap>10-ネットワークで対戦</td>
 				</tr>
 				<tr>
@@ -47,7 +47,7 @@
 <style>
 /* 複数のcanvasをz-indexを指定して同じ位置に重ねる */
 	 #stage {
-	 	width: 100px
+	 	width: 100px;
 		height: 360px;
 		position: relative;
 	}
@@ -77,8 +77,8 @@ const playerImage = $('#player-image')[0];
 
 // グローバル変数定義
 // プレイ描画用canvas名 グローバル変数として定義
-const canvas = document.getElementById('player-layer');
-const context = canvas.getContext('2d');
+const Canvas = document.getElementById('player-layer');
+const CTX = Canvas.getContext('2d');
 const CvsClick = document.getElementById('click-layer');
 const CtxClick = CvsClick.getContext('2d');
 const CvsV = document.getElementById('border-layer');
@@ -129,12 +129,12 @@ $(document).on('keydown keyup', (event) => {
 });
 
 socket.on('state', function(players, bullets, walls) {
-    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.clearRect(0, 0, Canvas.width, Canvas.height);
 
-//    context.lineWidth = 10;
-//    context.beginPath();
-//    context.rect(0, 0, canvas.width, canvas.height);
-//    context.stroke();
+    context.lineWidth = 10;
+    context.beginPath();
+    context.rect(0, 0, Canvas.width, Canvas.height);
+    context.stroke();
 
     Object.values(players).forEach((player) => {
         context.save();
