@@ -90,6 +90,8 @@ const BGctx = BGcanvas.getContext('2d');
 
 let OriginX, OriginY;          // canvas の中心グローバルX座標 resize()内で定義
 
+// グローバル 配列
+const LayerNames = ['click', 'title', 'player', 'border', 'score', 'bg' ];
 
 // ウィンドウが開かれたら 事前準備してからloop()に入る
 window.onload = () => {
