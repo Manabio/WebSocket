@@ -207,10 +207,10 @@ function resizeWindow(){
 		canvas.setAttribute( "width",  screenWidth );
 		canvas.setAttribute( "height", screenHeight );
 	}
-	CTX.translate(player.width/2, player.height/2);
+	CTX.translate(playerImage.width/2, playerImage.height/2);
 
 
-	ScreenK = 1000 / (screenWidth - player.width/2 );
+	ScreenK = 1000 / (screenWidth - playerImage.width/2 );
 
 	//
 	$('#start-screen').width(screenWidth);
