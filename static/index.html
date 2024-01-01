@@ -37,7 +37,7 @@
 				<canvas id="score-layer"></canvas>
 				<canvas id="bg-layer"></canvas>
 
-		<div style="flex: 1 1; overflow:hidden;">
+		<div style="flex: 1 1; position: relative; overflow:hidden;">
 			<div id="start-screen" style="width:100%; height:100%; display: flex; align-items: center; position:absolute; z-index:10;background-color:rgba(128,128,128,0.5);">
 				<div style="text-align: center; width: 100%; font-size: xx-large;">
 					<input type="text" name="nickname" id="nickname" placeholder="Your nickname" autofocus><br/><br/>
@@ -52,7 +52,7 @@
 <style>
 /* 複数のcanvasをz-indexを指定して同じ位置に重ねる */
 	 #stage {
-	 	width: 100px;
+	 	width:  100px;
 		height: 360px;
 		position: relative;
 	}
@@ -205,6 +205,12 @@ function resizeWindow(){
 		canvas.setAttribute( "width",  screenWidth );
 		canvas.setAttribute( "height", screenHeight );
 	}
+
+	//
+	document.getElementById('start-screen').clientWidth.value  = screenWidth;
+	document.getElementById('start-screen').clientHeight.value = screenHeight;
+
+
 }
 </script>
 </html>
