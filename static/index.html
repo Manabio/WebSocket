@@ -1,23 +1,251 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Paiza Battle Ground</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  </head>
-  <body style="display: flex; flex-direction: column; width: 100%; height: 100%; margin: 0;">
-    <div>Paiza Battle Field</div>
-    <div>
-        <div id="start-screen" style="width:100%; height:100%; display: flex; align-items: center; position:absolute; z-index:10;background-color:rgba(128,128,128,0.5);">
-            <div style="text-align: center; width: 100%; font-size: xx-large;">
-                <input type="text" name="nickname" id="nickname" placeholder="Your nickname" autofocus><br/><br/>
-                <button style="font-size: xx-large;" id="start-button">Start</button>
-            </div>
-        </div>
-        <canvas id="canvas-2d" width="1000" height="1000" style="position:absolute;width:100%;height:100%;object-fit:contain;"></canvas>
-    </div>
-    <img id="player-image" src="/static/player.gif" style="display: none;">
-    <script src="/static/game.js"></script>
-  </body>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>マナビオ　ネットワークで対戦</title>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+<table>
+	<tr>
+		<td valign="top">
+			<table id="data_table">
+				<tr>
+					<td><img src="./pics/manabio-logo.png"></td>
+					<td nowrap>10-ネットワークで対戦</td>
+				</tr>
+				<tr>
+					<td colspan="2"><hr></td>
+				</tr>
+				<tr>
+					<td>振子情報</td>
+					<td>
+						<select id="layer_num" onchange="changeLayer();">
+							<option value="0" selected>0</option>
+						</select>&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="add_Layer" value="追加" onclick="addLayer();">&nbsp;&nbsp;&nbsp;<input type="button" id="del_Layer" value="削除" onclick="delLayer();">
+					</td>
+				</tr>
+				<tr>
+					<td rowspan="8"><img src="./pics/振子の絵.png"></td>
+					<td>長さＡ&nbsp;<input type="number" id="field0"  style="width:80px;" value="300" onchange="changeDatas();" />&nbsp;ｍｍ</td>
+				</tr>
+				<tr>
+					<td>長さＢ&nbsp;<input type="number" id="field1"  style="width:80px;" value="1900" onchange="changeDatas();" />&nbsp;ｍｍ</td>
+				</tr>
+				<tr>
+					<td>減衰率&nbsp;<input type="number" id="field2"  style="width:80px;" value="0.000002" onchange="changeDatas();" />&nbsp;ｍｍ</td>
+				</tr>
+				<tr>
+					<td nowrap>開始位置&nbsp;（<span id="x_start">0</span>，<span id="y_start">0</span>）</td>
+				</tr>
+				<tr>
+					<td nowrap>開始速度&nbsp;（<span id="v0_x">0</span>，<span id="v0_y">0</span>）</td>
+				</tr>
+				<tr>
+					<td><input type="number" id="field3"  style="width:80px;" onchange="changeDatas();" />&nbsp;まで</td>
+				</tr>
+				<tr>
+					<td><input type="button" id="calc1" value="↑収束まで自動計算" onclick="document.getElementById('field3').value = calcSteps2end();"></td>
+				</tr>
+				<tr>
+					<td>ペン色&nbsp;<input type="color" id="pen_color" value="#F0F0F0" oninput="changeDatas();" /></td>
+				</tr>
+				<tr>
+					<td colspan="2"><hr></td>
+				</tr>
+				<tr>
+					<td>表&nbsp;示</td>
+					<td>背景色&nbsp;<input type="color" id="bg_color" value="#202040" oninput="changeBG();" /></td>
+				</tr>
+				<tr>
+					<td colspan="2"><hr></td>
+				</tr>
+				<tr>
+					<td>操&nbsp;作</td>
+					<td><span id="timeCounter">0"00'00</span></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>&nbsp;<input type="button" id="play" value="再生"onClick="startPlay();">&nbsp;&nbsp;<input type="button" id="stop" value="停止"onClick="stopPlay();" disabled /></td>
+				</tr>
+			</table>
+		</td>
+		<td  width="100%" valign="top" id="Screen">
+
+
+		<div id="start-screen" style="width:100%; height:100%; display: flex; align-items: center; position:absolute; z-index:10;background-color:rgba(128,128,128,0.5);">
+			<div style="text-align: center; width: 100%; font-size: xx-large;">
+				<input type="text" name="nickname" id="nickname" placeholder="Your nickname" autofocus><br/><br/>
+				<button style="font-size: xx-large;" id="start-button" onclick="gameStart();">Start</button>
+			</div>
+		</div>
+	    <img id="player-image" src="/static/player.gif" style="display: none;">
+
+
+			<div id="stage">
+				<canvas id="click-layer"></canvas>
+				<canvas id="title-layer"></canvas>
+				<canvas id="player-layer"></canvas>
+				<canvas id="border-layer"></canvas>
+				<canvas id="score-layer"></canvas>
+				<canvas id="bg-layer"></canvas>
+			</div>
+		</td>
+<style>
+/* 複数のcanvasをz-indexを指定して同じ位置に重ねる */
+	 #stage {
+	 	width: 100px
+		height: 360px;
+		position: relative;
+	}
+
+  	canvas { position: absolute; }
+	#click-layer  { z-index:10; }
+	#title-layer  { z-index: 8; }
+	#score-layer  { z-index: 7; }
+	#border-layer { z-index: 5; }
+	#player-layer { z-index: 3; }
+	#bg-layer     { z-index: 1; }
+</style>
+    </tr>
+</table>
+<script>
+/*     Lissaguous    */
+/*      Ver.1.0      */
+/*  by T.Matsuyama   */
+/*         @ Manabio */
+'use strict';
+
+// グローバル変数
+const socket = io();
+const canvas = $('#player-layer')[0];
+const context = canvas.getContext('2d');
+const playerImage = $('#player-image')[0];
+
+// グローバル変数定義
+// プレイ描画用canvas名 グローバル変数として定義
+const Canvas = document.getElementById('player-layer');
+const CTX = Canvas.getContext('2d');
+const CvsClick = document.getElementById('click-layer');
+const CtxClick = CvsClick.getContext('2d');
+const CvsV = document.getElementById('border-layer');
+const CtxV = CvsV.getContext('2d');
+
+// 背景描画用canvas名 グローバル変数として定義
+const BGcanvas = document.getElementById('player-layer');
+const BGctx = BGcanvas.getContext('2d');
+
+let OriginX, OriginY;          // canvas の中心グローバルX座標 resize()内で定義
+
+
+// プレイ開始 関数
+function gameStart(){
+    socket.emit('game-start', {nickname: $("#nickname").val() });
+    $("#start-screen").hide();
+}
+
+//$("#start-button").on('click', gameStart);
+
+let movement = {};
+
+$(document).on('keydown keyup', (event) => {
+    const KeyToCommand = {
+        'ArrowUp': 'forward',
+        'ArrowDown': 'back',
+        'ArrowLeft': 'left',
+        'ArrowRight': 'right',
+    };
+    const command = KeyToCommand[event.key];
+    if(command){
+        if(event.type === 'keydown'){
+            movement[command] = true;
+        }else{ /* keyup */
+            movement[command] = false;
+        }
+        socket.emit('movement', movement);
+    }
+    if(event.key === ' ' && event.type === 'keydown'){
+        socket.emit('shoot');
+    }
+});
+
+socket.on('state', function(players, bullets, walls) {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
+    context.lineWidth = 10;
+    context.beginPath();
+    context.rect(0, 0, canvas.width, canvas.height);
+    context.stroke();
+
+    Object.values(players).forEach((player) => {
+        context.save();
+        context.font = '20px Bold Arial';
+        context.fillText(player.nickname, player.x, player.y + player.height + 25);
+        context.font = '10px Bold Arial';
+        context.fillStyle = "gray";
+        context.fillText('♥'.repeat(player.maxHealth), player.x, player.y + player.height + 10);
+        context.fillStyle = "red";
+        context.fillText('♥'.repeat(player.health), player.x, player.y + player.height + 10);
+        context.translate(player.x + player.width/2, player.y + player.height/2);
+        context.rotate(player.angle);
+        context.drawImage(playerImage, 0, 0, playerImage.width, playerImage.height, -player.width/2, -player.height/2, player.width, player.height);
+        context.restore();
+        
+        if(player.socketId === socket.id){
+            context.save();
+            context.font = '30px Bold Arial';
+            context.fillText('You', player.x, player.y - 20);
+            context.fillText(player.point + ' point', 20, 40);
+            context.restore();
+        }
+    });
+    Object.values(bullets).forEach((bullet) => {
+        context.beginPath();
+        context.arc(bullet.x, bullet.y, bullet.width/2, 0, 2 * Math.PI);
+        context.stroke();
+    });
+    Object.values(walls).forEach((wall) => {
+        context.fillStyle = 'black';
+        context.fillRect(wall.x, wall.y, wall.width, wall.height);
+    });
+});
+
+socket.on('dead', () => {
+    $("#start-screen").show();
+});
+
+
+// ウィンドウ リサイズ処理
+function resizeWindow(){
+	// 画面比 1:1
+	let scW = document.documentElement.clientWidth - document.getElementById('data_table').offsetWidth -16;
+	let scH = document.documentElement.clientHeight -16;
+	let k;
+	if( scW > scH ){
+		// 高さ 優先
+		scW = scH;
+		k   = (document.documentElement.clientHeight - 16)/ 508
+	} else {
+		// 幅 優先
+		scH = scW;
+		k   = (document.documentElement.clientWidth  -16) / 1108;
+	}
+	ScreenK = k; // 描画画面倍率設定
+	const screenWidth  = scW;
+	const screenHeight = scH;
+	const canvas = document.getElementById('stage');
+	canvas.setAttribute( "width" , screenWidth );
+	canvas.setAttribute( "height", screenHeight );
+	// canvas 大きさ設定
+	for(let i=0; i<LayerNames.length; i++){
+		const canvas = document.getElementById(`${LayerNames[i]}-layer`);
+		canvas.setAttribute( "width",  screenWidth );
+		canvas.setAttribute( "height", screenHeight );
+	}
+
+	// 表示座標系のオリジン 変更
+	OriginX = Math.floor(  screenWidth / 2 ); // キャンバスの半分
+	OriginY = Math.floor( screenHeight / 2 ); // キャンバスの半分
+}
+</script>
 </html>
