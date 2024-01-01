@@ -136,11 +136,6 @@ $(document).on('keydown keyup', (event) => {
 socket.on('state', function(players, bullets, walls) {
 	CTX.clearRect(0, 0, Canvas.width, Canvas.height);
 
-//	CTX.lineWidth = 10;
-//	CTX.beginPath();
-//	CTX.rect(0, 0, Canvas.width, Canvas.height);
-//	CTX.stroke();
-
 	Object.values(players).forEach((player) => {
 		const x = ScreenK * player.x;
 		const y = ScreenK * player.y;
@@ -212,8 +207,10 @@ function resizeWindow(){
 		canvas.setAttribute( "width",  screenWidth );
 		canvas.setAttribute( "height", screenHeight );
 	}
+	CTX.translate(player.width/2, player.height/2);
 
-	ScreenK = 1000 / screenWidth;
+
+	ScreenK = 1000 / (screenWidth - player.width/2 );
 
 	//
 	$('#start-screen').width(screenWidth);
