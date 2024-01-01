@@ -79,6 +79,8 @@ const socket = io();
 const playerImage = $('#player-image')[0];
 
 // グローバル変数定義
+let ScreenK; // 描画域の倍率
+
 // プレイ描画用canvas名 グローバル変数として定義
 const Canvas = document.getElementById('player-layer');
 const CTX = Canvas.getContext('2d');
@@ -134,21 +136,23 @@ $(document).on('keydown keyup', (event) => {
 socket.on('state', function(players, bullets, walls) {
 	CTX.clearRect(0, 0, Canvas.width, Canvas.height);
 
-	CTX.lineWidth = 10;
-	CTX.beginPath();
-	CTX.rect(0, 0, Canvas.width, Canvas.height);
-	CTX.stroke();
+//	CTX.lineWidth = 10;
+//	CTX.beginPath();
+//	CTX.rect(0, 0, Canvas.width, Canvas.height);
+//	CTX.stroke();
 
 	Object.values(players).forEach((player) => {
+		const x = ScreenK * player.x;
+		const y = ScreenK * player.y;
 		CTX.save();
 		CTX.font = '20px Bold Arial';
-		CTX.fillText(player.nickname, player.x, player.y + player.height + 25);
+		CTX.fillText(player.nickname, x, y + player.height + 25);
 		CTX.font = '10px Bold Arial';
 		CTX.fillStyle = "gray";
-		CTX.fillText('♥'.repeat(player.maxHealth), player.x, player.y + player.height + 10);
+		CTX.fillText('♥'.repeat(player.maxHealth), x, y + player.height + 10);
 		CTX.fillStyle = "red";
-		CTX.fillText('♥'.repeat(player.health), player.x, player.y + player.height + 10);
-		CTX.translate(player.x + player.width/2, player.y + player.height/2);
+		CTX.fillText('♥'.repeat(player.health), x, y + player.height + 10);
+		CTX.translate(x + player.width/2, y + player.height/2);
 		CTX.rotate(player.angle);
 		CTX.drawImage(playerImage, 0, 0, playerImage.width, playerImage.height, -player.width/2, -player.height/2, player.width, player.height);
 		CTX.restore();
@@ -156,7 +160,7 @@ socket.on('state', function(players, bullets, walls) {
 		if(player.socketId === socket.id){
 			CTX.save();
 			CTX.font = '30px Bold Arial';
-			CTX.fillText('You', player.x, player.y - 20);
+			CTX.fillText('You', x, y - 20);
 			CTX.fillText(player.point + ' point', 20, 40);
 			CTX.restore();
 
@@ -209,6 +213,8 @@ function resizeWindow(){
 		canvas.setAttribute( "height", screenHeight );
 	}
 
+	ScreenK = 1000 / screenWidth;
+
 	//
 	$('#start-screen').width(screenWidth);
 	$('#start-screen').height(screenHeight);
@@ -235,7 +241,7 @@ function resizeWindow(){
 	// 文字 描画
 	ctxBG.fillStyle = 'rgb(255, 255, 255)';
 	ctxBG.font = "12px serif";
-	let text = "Lissajous figure";
+	let text = "Network Communication Program";
 	ctxBG.fillText(text, 10, 15);
 }
 </script>
