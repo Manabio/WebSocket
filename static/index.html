@@ -19,54 +19,7 @@
 				</tr>
 				<tr>
 					<td>振子情報</td>
-					<td>
-						<select id="layer_num" onchange="changeLayer();">
-							<option value="0" selected>0</option>
-						</select>&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="add_Layer" value="追加" onclick="addLayer();">&nbsp;&nbsp;&nbsp;<input type="button" id="del_Layer" value="削除" onclick="delLayer();">
-					</td>
-				</tr>
-				<tr>
-					<td rowspan="8"><img src="./pics/振子の絵.png"></td>
-					<td>長さＡ&nbsp;<input type="number" id="field0"  style="width:80px;" value="300" onchange="changeDatas();" />&nbsp;ｍｍ</td>
-				</tr>
-				<tr>
-					<td>長さＢ&nbsp;<input type="number" id="field1"  style="width:80px;" value="1900" onchange="changeDatas();" />&nbsp;ｍｍ</td>
-				</tr>
-				<tr>
-					<td>減衰率&nbsp;<input type="number" id="field2"  style="width:80px;" value="0.000002" onchange="changeDatas();" />&nbsp;ｍｍ</td>
-				</tr>
-				<tr>
-					<td nowrap>開始位置&nbsp;（<span id="x_start">0</span>，<span id="y_start">0</span>）</td>
-				</tr>
-				<tr>
-					<td nowrap>開始速度&nbsp;（<span id="v0_x">0</span>，<span id="v0_y">0</span>）</td>
-				</tr>
-				<tr>
-					<td><input type="number" id="field3"  style="width:80px;" onchange="changeDatas();" />&nbsp;まで</td>
-				</tr>
-				<tr>
-					<td><input type="button" id="calc1" value="↑収束まで自動計算" onclick="document.getElementById('field3').value = calcSteps2end();"></td>
-				</tr>
-				<tr>
-					<td>ペン色&nbsp;<input type="color" id="pen_color" value="#F0F0F0" oninput="changeDatas();" /></td>
-				</tr>
-				<tr>
-					<td colspan="2"><hr></td>
-				</tr>
-				<tr>
-					<td>表&nbsp;示</td>
-					<td>背景色&nbsp;<input type="color" id="bg_color" value="#202040" oninput="changeBG();" /></td>
-				</tr>
-				<tr>
-					<td colspan="2"><hr></td>
-				</tr>
-				<tr>
-					<td>操&nbsp;作</td>
-					<td><span id="timeCounter">0"00'00</span></td>
-				</tr>
-				<tr>
 					<td></td>
-					<td>&nbsp;<input type="button" id="play" value="再生"onClick="startPlay();">&nbsp;&nbsp;<input type="button" id="stop" value="停止"onClick="stopPlay();" disabled /></td>
 				</tr>
 			</table>
 		</td>
@@ -118,14 +71,14 @@
 
 // グローバル変数
 const socket = io();
-const canvas = $('#player-layer')[0];
-const context = canvas.getContext('2d');
+//const canvas = $('#player-layer')[0];
+//const context = canvas.getContext('2d');
 const playerImage = $('#player-image')[0];
 
 // グローバル変数定義
 // プレイ描画用canvas名 グローバル変数として定義
-const Canvas = document.getElementById('player-layer');
-const CTX = Canvas.getContext('2d');
+const canvas = document.getElementById('player-layer');
+const context = canvas.getContext('2d');
 const CvsClick = document.getElementById('click-layer');
 const CtxClick = CvsClick.getContext('2d');
 const CvsV = document.getElementById('border-layer');
@@ -136,6 +89,12 @@ const BGcanvas = document.getElementById('player-layer');
 const BGctx = BGcanvas.getContext('2d');
 
 let OriginX, OriginY;          // canvas の中心グローバルX座標 resize()内で定義
+
+
+// ウィンドウが開かれたら 事前準備してからloop()に入る
+window.onload = () => {
+	resizeWindow(); // 画面描画
+};
 
 
 // プレイ開始 関数
@@ -172,10 +131,10 @@ $(document).on('keydown keyup', (event) => {
 socket.on('state', function(players, bullets, walls) {
     context.clearRect(0, 0, canvas.width, canvas.height);
 
-    context.lineWidth = 10;
-    context.beginPath();
-    context.rect(0, 0, canvas.width, canvas.height);
-    context.stroke();
+//    context.lineWidth = 10;
+//    context.beginPath();
+//    context.rect(0, 0, canvas.width, canvas.height);
+//    context.stroke();
 
     Object.values(players).forEach((player) => {
         context.save();
