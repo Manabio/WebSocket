@@ -29,10 +29,6 @@
 					<td></td>
 					<td><button id="start_button" onclick="gameStart();">Start</button></td>
 				</tr>
-				<tr>
-					<td nowrap>ボットの座標</td>
-					<td nowrap>（<span id="botX">0</span>,<span id="botY">0</span>）</td>
-				</tr>
 			</table>
 		</td>
 		<td  width="100%" valign="top" id="Screen">
@@ -84,8 +80,6 @@ const Canvas = document.getElementById('player-layer');
 const CTX = Canvas.getContext('2d');
 const SCcanvas = document.getElementById('score-layer');
 const SCctx = SCcanvas.getContext('2d');
-SCctx.font = '12px serif';
-SCctx.fillStyle = 'rgb(255, 255, 255)';
 
 
 // グローバル 配列
@@ -93,7 +87,15 @@ const LayerNames = ['click', 'title', 'player', 'border', 'score', 'bg' ];
 
 // ウィンドウが開かれたら 事前準備してからloop()に入る
 window.onload = () => {
+	// 効果音等 事前読込み
+	audios = {"shoot": new Audio("/sounds/cannon1.mp3"), "explose": new Audio("/sounds/explose1.mp3")};
+	for(var i in audios){
+		audios[i].load();
+	}
+
 	resizeWindow(); // 画面描画
+
+
 };
 
 
@@ -112,24 +114,26 @@ let movement = {};
 
 // キー入力 処理
 $(document).on('keydown keyup', (event) => {
-    const KeyToCommand = {
-        'ArrowUp': 'forward',
-        'ArrowDown': 'back',
-        'ArrowLeft': 'left',
-        'ArrowRight': 'right',
-    };
-    const command = KeyToCommand[event.key];
-    if(command){
-        if(event.type === 'keydown'){
-            movement[command] = true;
-        }else{ /* keyup */
-            movement[command] = false;
-        }
-        socket.emit('movement', movement);
-    }
-    if(event.key === ' ' && event.type === 'keydown'){
-        socket.emit('shoot');
-    }
+	const KeyToCommand = {
+		'ArrowUp': 'forward',
+		'ArrowDown': 'back',
+		'ArrowLeft': 'left',
+		'ArrowRight': 'right',
+	};
+	const command = KeyToCommand[event.key];
+	if(command){
+		if(event.type === 'keydown'){
+			movement[command] = true;
+		}else{ /* keyup */
+			movement[command] = false;
+		}
+		socket.emit('movement', movement);
+	}
+	if(event.key === ' ' && event.type === 'keydown'){
+		socket.emit('shoot');
+		audios["shoot"].currentTime = 0;
+		audios["shoot"].play(); // 効果音を鳴らす
+	}
 });
 
 
@@ -151,18 +155,19 @@ socket.on('state', function(players, bullets, walls) {
 		CTX.fillText('♥'.repeat(player.health), x, y + ScreenK * (player.height + 5));
 		CTX.translate(x + player.width/2, y + player.height/2);
 		CTX.rotate(player.angle);
-//		CTX.drawImage(playerImage, 0, 0, ScreenK * playerImage.width, ScreenK * playerImage.height, -ScreenK * player.height/2, -ScreenK * player.height/2, ScreenK * player.width, ScreenK * player.height);
 		CTX.drawImage(playerImage, -(ScreenK * playerImage.width/2), -(ScreenK * playerImage.height/2));
 		CTX.restore();
 
 		if(player.socketId === socket.id){
 			CTX.save();
 			CTX.font = '14px Bold Arial';
+			SCctx.fillStyle = 'rgb(0, 0, 0)';
 			let text = 'You';
 			let text_length = CTX.measureText(text).width;
 			CTX.fillText( text, x + ScreenK * (player.height - text_length)/2, y); // You 描画
 			text = String( player.point );
 			text_length = SCctx.measureText(text).width;
+			SCctx.font = '12px serif';
 			SCctx.fillStyle = 'rgb(255, 255, 255)';
 			SCctx.fillText(text, SCcanvas.width -20 - text_length, 15);   // スコア描画
 			CTX.restore();
@@ -180,6 +185,7 @@ socket.on('state', function(players, bullets, walls) {
 			CTX.fill();
 	});
 
+	// 壁 描画
 	Object.values(walls).forEach((wall) => {
 		CTX.fillStyle = '#C2E47C';
 		CTX.fillRect(ScreenK * wall.x, ScreenK * wall.y, ScreenK * wall.width, ScreenK * wall.height);
@@ -248,7 +254,7 @@ function resizeWindow(){
 	let text = "Network Communication Program";
 	ctxBG.fillText(text, 10, 15);
 	text = "Score";
-	ctxBG.fillText(text, screenWidth - 250, 15);
+	ctxBG.fillText(text, screenWidth - 150, 15);
 }
 </script>
 </html>
