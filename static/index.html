@@ -131,8 +131,8 @@ $(document).on('keydown keyup', (event) => {
 	}
 	if(event.key === ' ' && event.type === 'keydown'){
 		socket.emit('shoot');
-		if( OldShootNum > ShootNum ){
-			ShootNum++;
+		if( ShootNum > OldShootNum ){
+			ShootNum = OldShootNum;
 			SE.shoot.play();
 		}
 	}
