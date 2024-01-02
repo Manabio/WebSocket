@@ -153,8 +153,10 @@ socket.on('state', function(players, bullets, walls) {
 		if(player.socketId === socket.id){
 			CTX.save();
 			CTX.font = '14px Bold Arial';
-			CTX.fillText('You', x + ScreenK * player.height/2, y - ScreenK * 5); // You 描画
-			const text_length = SCctx.measureText(String( player.point ));
+			const text = 'You';
+			const text_length = CTX.measureText(text).width;
+			CTX.fillText( text, x + ScreenK * player.height/2 - text_length/2, y - ScreenK * 5); // You 描画
+			const text_length = SCctx.measureText(String( player.point )).width;
 			SCctx.fillText(player.point, SCcanvas.width -20 - text_length, 15);   // スコア描画
 			CTX.restore();
 			// 自分の座標 表示
@@ -166,14 +168,14 @@ socket.on('state', function(players, bullets, walls) {
 	// 弾 描画
 	Object.values(bullets).forEach((bullet) => {
 			CTX.beginPath();
-			CTX.fillStyle = "rgba(255,178,169,0.8)";
 			CTX.arc(ScreenK * bullet.x, ScreenK * bullet.y, bullet.width/2, 0, 2 * Math.PI);
+			CTX.fillStyle = "rgba(255,178,169,0.8)";
 			CTX.fill();
 	});
 
 	Object.values(walls).forEach((wall) => {
-		CTX.fillStyle = 'black';
-		CTX.fillRect(ScreenK * wall.x, ScreenK * wall.y, wall.width, wall.height);
+		CTX.fillStyle = '#C2E47C';
+		CTX.fillRect(ScreenK * wall.x, ScreenK * wall.y, ScreenK * wall.width, ScreenK * wall.height);
 	});
 });
 
