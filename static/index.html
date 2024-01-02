@@ -84,6 +84,8 @@ const Canvas = document.getElementById('player-layer');
 const CTX = Canvas.getContext('2d');
 const SCcanvas = document.getElementById('score-layer');
 const SCctx = SCcanvas.getContext('2d');
+SCctx.fillStyle = 'rgb(255, 255, 255)';
+
 
 // グローバル 配列
 const LayerNames = ['click', 'title', 'player', 'border', 'score', 'bg' ];
