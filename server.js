@@ -90,8 +90,9 @@ class Player extends GameObject{
 		// 同時 発射は３発まで
 		if(Object.keys(this.bullets).length >= 3){
 			return; // ３発越えは速リターン
+		} else {
+			this.shootNum++;
 		}
-		this.shootNum++;
 		const bullet = new Bullet({
 			x: this.x + this.width/2,
 			y: this.y + this.height/2,
@@ -136,7 +137,7 @@ class Bullet extends GameObject{
 	remove(){
 		delete this.player.bullets[this.id];
 		delete bullets[this.id];
-		if( this.shootNum -1 > 0 ){
+		if( this.shootNum > 0 ){
 			this.shootNum--;
 		}
 	}
