@@ -72,9 +72,10 @@ const socket = io();
 const playerImage = $('#player_image')[0];
 
 // グローバル変数定義
-let ScreenK;         // 描画域の倍率
-let ShootNum = 0;    // 発射中の弾数
-let OnPlay = 0;      // プレイ中なら1
+let ScreenK;          // 描画域の倍率
+let ShootNum = 0;     // 発射中の弾数
+let ShootNum_old = 0; // 前処理中の弾数
+let OnPlay = 0;       // プレイ中なら1
 
 // canvas名 グローバル変数として定義
 const Canvas = document.getElementById('player-layer');
@@ -130,7 +131,8 @@ $(document).on('keydown keyup', (event) => {
 	}
 	if(event.key === ' ' && event.type === 'keydown'){
 		socket.emit('shoot');
-		if( ShootNum < 4 ){
+		if( ShootNum > ShootNum_old ){
+			ShootNum_old = ShootNum;
 			SE.shoot.play();
 		}
 	}
