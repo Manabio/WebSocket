@@ -125,8 +125,8 @@ class Player extends GameObject{
 class Bullet extends GameObject{
 	constructor(obj){
 		super(obj);
-		this.width = 15;
-		this.height = 15;
+		this.width  = 8; // 弾の半径
+		this.height = 8;
 		this.player = obj.player;
 	}
 
