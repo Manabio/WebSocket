@@ -21,6 +21,14 @@
 					<td nowrap>あなたの座標</td>
 					<td nowrap>（<span id="yourX">0</span>,<span id="yourY">0</span>）</td>
 				</tr>
+				<tr>
+					<td>ニックネーム</td>
+					<td><input type="text" name="nickname" id="nickname" placeholder="Your nickname" autofocus></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td><button style="font-size: xx-large;" id="start_button" onclick="gameStart();">Start</button></td>
+				</tr>
 			</table>
 		</td>
 		<td  width="100%" valign="top" id="Screen">
@@ -39,8 +47,7 @@
 
 			<div id="start-screen" style="display: flex; align-items: center; position:absolute; z-index:10;background-color:rgba(128,128,128,0.5);">
 				<div style="text-align: center; width: 100%; font-size: xx-large;">
-					<input type="text" name="nickname" id="nickname" placeholder="Your nickname" autofocus><br/><br/>
-					<button style="font-size: xx-large;" id="start-button" onclick="gameStart();">Start</button>
+					
 				</div>
 			</div>
 
@@ -79,7 +86,8 @@ const socket = io();
 const playerImage = $('#player-image')[0];
 
 // グローバル変数定義
-let ScreenK; // 描画域の倍率
+let ScreenK;    // 描画域の倍率
+let OnPlay = 0; // プレイ中なら1
 
 // プレイ描画用canvas名 グローバル変数として定義
 const Canvas = document.getElementById('player-layer');
@@ -104,14 +112,19 @@ window.onload = () => {
 
 // プレイ開始 関数
 function gameStart(){
-    socket.emit('game-start', {nickname: $("#nickname").val() });
-    $("#start-screen").hide();
+	OnPlay = 1;
+	socket.emit('game-start', {nickname: $("#nickname").val() });
+//    $("#start-screen").hide();
+	// 入力規制
+	document.getElementById('nickname').disabled     = true; // ニックネームフィールド
+	document.getElementById('start_button').disabled = true; // start ボタン
 }
 
-//$("#start-button").on('click', gameStart);
 
 let movement = {};
 
+
+// キー入力 処理
 $(document).on('keydown keyup', (event) => {
     const KeyToCommand = {
         'ArrowUp': 'forward',
@@ -133,6 +146,8 @@ $(document).on('keydown keyup', (event) => {
     }
 });
 
+
+// 'state' 処理
 socket.on('state', function(players, bullets, walls) {
 	CTX.clearRect(0, 0, Canvas.width, Canvas.height);
 
@@ -140,7 +155,7 @@ socket.on('state', function(players, bullets, walls) {
 		const x = ScreenK * player.x;
 		const y = ScreenK * player.y;
 		CTX.save();
-		CTX.font = '20px Bold Arial';
+		CTX.font = '10px Bold Arial';
 		CTX.fillText(player.nickname, x, y + player.height + 25);
 		CTX.font = '10px Bold Arial';
 		CTX.fillStyle = "gray";
@@ -154,7 +169,7 @@ socket.on('state', function(players, bullets, walls) {
 
 		if(player.socketId === socket.id){
 			CTX.save();
-			CTX.font = '30px Bold Arial';
+			CTX.font = '15px Bold Arial';
 			CTX.fillText('You', x, y - 20);
 			CTX.fillText(player.point + ' point', 20, 40);
 			CTX.restore();
@@ -176,8 +191,13 @@ socket.on('state', function(players, bullets, walls) {
 	});
 });
 
+
+// 'dead' 処理
 socket.on('dead', () => {
-    $("#start-screen").show();
+//    $("#start-screen").show();
+	// 入力規制 解除
+	document.getElementById('nickname').disabled     = false; // ニックネームフィールド
+	document.getElementById('start_button').disabled = false; // start ボタン
 });
 
 
@@ -207,10 +227,10 @@ function resizeWindow(){
 		canvas.setAttribute( "width",  screenWidth );
 		canvas.setAttribute( "height", screenHeight );
 	}
-	CTX.translate(playerImage.width/2, playerImage.height/2);
+	CTX.translate(0, 0);
 
 
-	ScreenK = 1000 / (screenWidth - playerImage.width/2 );
+	ScreenK = 1000 / screenWidth;
 
 	//
 	$('#start-screen').width(screenWidth);
