@@ -76,6 +76,7 @@ class Player extends GameObject{
 		this.bullets  = {};
 		this.point    = 0;
 		this.movement = {};
+		this.shootNum = 0;
 
 		do{
 			this.x = Math.random() * (FIELD_WIDTH  - this.width);
@@ -90,6 +91,7 @@ class Player extends GameObject{
 		if(Object.keys(this.bullets).length >= 3){
 			return; // ３発越えは速リターン
 		}
+		this.shootNum++;
 		const bullet = new Bullet({
 			x: this.x + this.width/2,
 			y: this.y + this.height/2,
@@ -117,7 +119,7 @@ class Player extends GameObject{
 
 	// JSON 記録
 	toJSON(){
-		return Object.assign(super.toJSON(), {health: this.health, maxHealth: this.maxHealth, socketId: this.socketId, point: this.point, nickname: this.nickname});
+		return Object.assign(super.toJSON(), {health: this.health, maxHealth: this.maxHealth, socketId: this.socketId, point: this.point, nickname: this.nickname, shootNum: this.shootNum});
 	}
 };
 
@@ -134,10 +136,11 @@ class Bullet extends GameObject{
 	remove(){
 		delete this.player.bullets[this.id];
 		delete bullets[this.id];
+		this.shootNum--;
 	}
 };
 
-// ボットプレイヤー（= プライヤークラスの子宣言）
+// ボットプレイヤー（= プレイヤークラスの子宣言）
 class BotPlayer extends Player{
 	constructor(obj){
 		super(obj);
@@ -210,6 +213,7 @@ io.on('connection', function(socket) {
         player = null;
     });
 });
+
 
 // フレーム処理（30fps）
 setInterval(() => {
