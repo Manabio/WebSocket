@@ -11,7 +11,7 @@
 		<td valign="top">
 			<table id="data_table">
 				<tr>
-					<td><img src="./pics/manabio-logo.png"></td>
+					<td><img src="/pics/manabio-logo.png"></td>
 					<td nowrap>10-ネットワークで対戦</td>
 				</tr>
 				<tr>
@@ -32,11 +32,7 @@
 			</table>
 		</td>
 		<td  width="100%" valign="top" id="Screen">
-
-
-	    <img id="player-image" src="/static/player.gif" style="display: none;">
-
-
+		    <img id="player-image" src="/static/player.gif" style="display: none;">
 			<div id="stage">
 				<canvas id="click-layer"></canvas>
 				<canvas id="title-layer"></canvas>
@@ -44,14 +40,6 @@
 				<canvas id="border-layer"></canvas>
 				<canvas id="score-layer"></canvas>
 				<canvas id="bg-layer"></canvas>
-
-			<div id="start-screen" style="display: flex; align-items: center; position:absolute; z-index:10;background-color:rgba(128,128,128,0.5);">
-				<div style="text-align: center; width: 100%; font-size: xx-large;">
-					
-				</div>
-			</div>
-
-
 			</div>
 		</td>
 <style>
@@ -157,7 +145,7 @@ socket.on('state', function(players, bullets, walls) {
 		CTX.save();
 		CTX.font = '10px Bold Arial';
 		CTX.fillText(player.nickname, x, y + player.height + 25);
-		CTX.font = '10px Bold Arial';
+//		CTX.font = '10px Bold Arial';
 		CTX.fillStyle = "gray";
 		CTX.fillText('♥'.repeat(player.maxHealth), x, y + player.height + 10);
 		CTX.fillStyle = "red";
@@ -181,19 +169,20 @@ socket.on('state', function(players, bullets, walls) {
 
 	Object.values(bullets).forEach((bullet) => {
 			CTX.beginPath();
-			CTX.arc(bullet.x, bullet.y, bullet.width/2, 0, 2 * Math.PI);
+			CTX.arc(ScreenK * bullet.x, ScreenK * bullet.y, bullet.width/2, 0, 2 * Math.PI);
 			CTX.stroke();
 	});
 
 	Object.values(walls).forEach((wall) => {
 		CTX.fillStyle = 'black';
-		CTX.fillRect(wall.x, wall.y, wall.width, wall.height);
+		CTX.fillRect(ScreenK * wall.x, ScreenK * wall.y, wall.width, wall.height);
 	});
 });
 
 
 // 'dead' 処理
 socket.on('dead', () => {
+	OnPlay = 0;
 //    $("#start-screen").show();
 	// 入力規制 解除
 	document.getElementById('nickname').disabled     = false; // ニックネームフィールド
@@ -233,8 +222,8 @@ function resizeWindow(){
 	ScreenK = 1000 / screenWidth;
 
 	//
-	$('#start-screen').width(screenWidth);
-	$('#start-screen').height(screenHeight);
+//	$('#start-screen').width(screenWidth);
+//	$('#start-screen').height(screenHeight);
 
 	// canvas(背景)
 	const canvasBG = document.getElementById('bg-layer');
@@ -246,7 +235,7 @@ function resizeWindow(){
 
 	// マナビオ ロゴ
 	const logo = new Image();
-	logo.src = "./pics/logo-tate_white.svg";
+	logo.src = "/pics/logo-tate_white.svg";
 	logo.onload = () => {
 		ctxBG.drawImage(logo, Canvas.width-50, Canvas.height-40);
 	};
