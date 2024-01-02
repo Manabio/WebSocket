@@ -72,8 +72,9 @@ const socket = io();
 const playerImage = $('#player_image')[0];
 
 // グローバル変数定義
-let ScreenK;    // 描画域の倍率
-let OnPlay = 0; // プレイ中なら1
+let ScreenK;         // 描画域の倍率
+let OldShootNum = 0; // 前処理時の弾数
+let OnPlay = 0;      // プレイ中なら1
 
 // canvas名 グローバル変数として定義
 const Canvas = document.getElementById('player-layer');
@@ -83,24 +84,16 @@ const SCctx = SCcanvas.getContext('2d');
 
 
 // グローバル 配列
-let   Audios     = [];     // 効果音指定用配列
 const LayerNames = ['click', 'title', 'player', 'border', 'score', 'bg' ];
 let SE = {};
 
 // ウィンドウが開かれたら 事前準備してからloop()に入る
 window.onload = () => {
-	// 効果音等 事前読込み
-	Audios = {"shoot": new Audio("/sounds/cannon1.mp3"), "explose": new Audio("/sounds/explose1.mp3")};
-	for(var i in Audios){
-		Audios[i].load();
-	}
-
-const se_parent=$("body");
-SE={
-	shoot:new   Se(se_parent,"/sounds/cannon1.mp3",3),
-	explose:new Se(se_parent,"/sounds/explose1.mp3",2),
-};
-
+	const se_parent=$("body");
+	SE={
+		shoot:new   Se(se_parent,"/sounds/cannon1.mp3",3),
+		explose:new Se(se_parent,"/sounds/explose1.mp3",2),
+	};
 	resizeWindow(); // 画面描画
 };
 
@@ -137,10 +130,10 @@ $(document).on('keydown keyup', (event) => {
 	}
 	if(event.key === ' ' && event.type === 'keydown'){
 		socket.emit('shoot');
-SE.shoot.play();
-
-//		Audios["shoot"].currentTime = 0;
-//		Audios["shoot"].play(); // 効果音を鳴らす
+		if( player.shootNum > OldShootNum ){
+			SE.shoot.play();
+		}
+		OldShootNum = player.shootNum;
 	}
 });
 
