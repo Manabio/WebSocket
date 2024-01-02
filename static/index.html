@@ -84,6 +84,7 @@ const Canvas = document.getElementById('player-layer');
 const CTX = Canvas.getContext('2d');
 const SCcanvas = document.getElementById('score-layer');
 const SCctx = SCcanvas.getContext('2d');
+SCctx.font = '12px serif';
 SCctx.fillStyle = 'rgb(255, 255, 255)';
 
 
@@ -141,6 +142,7 @@ socket.on('state', function(players, bullets, walls) {
 		const y = ScreenK * player.y;
 		CTX.save();
 		CTX.font = '12px Bold Arial';
+		CTX.fillStyle = 'rgb(0, 0, 0)';
 		CTX.fillText(player.nickname, x, y + ScreenK * player.height + 15);
 		CTX.fillStyle = "gray";
 		CTX.fillText('♥'.repeat(player.maxHealth), x, y + ScreenK * (player.height + 5));
@@ -157,7 +159,6 @@ socket.on('state', function(players, bullets, walls) {
 			CTX.font = '14px Bold Arial';
 			let text = 'You';
 			let text_length = CTX.measureText(text).width;
-			CTX.fillStyle = 'rgb(0, 0, 0)';
 			CTX.fillText( text, x + ScreenK * (player.height - text_length)/2, y - ScreenK * 2); // You 描画
 			text = String( player.point );
 			text_length = SCctx.measureText(text).width;
