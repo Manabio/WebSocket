@@ -219,10 +219,13 @@ setInterval(() => {
 }, 1000/30);
 
 
-app.use('/static', express.static(__dirname + '/static'));
+//app.use('/static', express.static(__dirname + '/static'));
+app.use('/static', express.static(__dirname ));
+
 
 app.get('/', (request, response) => {
-  response.sendFile(path.join(__dirname, '/static/index.html'));
+//  response.sendFile(path.join(__dirname, '/static/index.html'));
+  response.sendFile(path.join(__dirname, '/20231230_index.html'));
 });
 
 server.listen(3000, function() {

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>マナビオ　ネットワークで対戦</title>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+<table>
+	<tr>
+		<td valign="top">
+			<table id="data_table">
+				<tr>
+					<td><img src="/pics/manabio-logo.png"></td>
+					<td nowrap>10-ネットワークで対戦</td>
+				</tr>
+				<tr>
+					<td colspan="2"><hr></td>
+				</tr>
+				<tr>
+					<td nowrap>あなたの座標</td>
+					<td nowrap>（<span id="yourX">0</span>,<span id="yourY">0</span>）</td>
+				</tr>
+				<tr>
+					<td>ニックネーム</td>
+					<td><input type="text" name="nickname" id="nickname" placeholder="Your nickname" autofocus></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td><button id="start_button" onclick="gameStart();">Start</button></td>
+				</tr>
+				<tr>
+					<td nowrap>ボットの座標</td>
+					<td nowrap>（<span id="botX">0</span>,<span id="botY">0</span>）</td>
+				</tr>
+			</table>
+		</td>
+		<td  width="100%" valign="top" id="Screen">
+		    <img id="player_image" src="/static/player.gif" style="display: none;">
+			<div id="stage">
+				<canvas id="click-layer"></canvas>
+				<canvas id="title-layer"></canvas>
+				<canvas id="player-layer"></canvas>
+				<canvas id="border-layer"></canvas>
+				<canvas id="score-layer"></canvas>
+				<canvas id="bg-layer"></canvas>
+			</div>
+		</td>
+<style>
+/* 複数のcanvasをz-indexを指定して同じ位置に重ねる */
+	 #stage {
+	 	width:  100px;
+		height: 360px;
+		position: relative;
+	}
+
+  	canvas { position: absolute; }
+	#click-layer  { z-index:10; }
+	#title-layer  { z-index: 8; }
+	#score-layer  { z-index: 7; }
+	#border-layer { z-index: 5; }
+	#player-layer { z-index: 3; }
+	#bg-layer     { z-index: 1; }
+</style>
+    </tr>
+</table>
+<script>
+/*     Lissaguous    */
+/*      Ver.1.0      */
+/*  by T.Matsuyama   */
+/*         @ Manabio */
+'use strict';
+
+// グローバル変数
+const socket = io();
+//const canvas = $('#player-layer')[0];
+//const context = canvas.getContext('2d');
+const playerImage = $('#player_image')[0];
+
+// グローバル変数定義
+let ScreenK;    // 描画域の倍率
+let OnPlay = 0; // プレイ中なら1
+
+// プレイ描画用canvas名 グローバル変数として定義
+const Canvas = document.getElementById('player-layer');
+const CTX = Canvas.getContext('2d');
+const CvsClick = document.getElementById('click-layer');
+const CtxClick = CvsClick.getContext('2d');
+const CvsV = document.getElementById('border-layer');
+const CtxV = CvsV.getContext('2d');
+
+// 背景描画用canvas名 グローバル変数として定義
+const BGcanvas = document.getElementById('player-layer');
+const BGctx = BGcanvas.getContext('2d');
+
+// グローバル 配列
+const LayerNames = ['click', 'title', 'player', 'border', 'score', 'bg' ];
+
+// ウィンドウが開かれたら 事前準備してからloop()に入る
+window.onload = () => {
+	resizeWindow(); // 画面描画
+};
+
+
+// プレイ開始 関数
+function gameStart(){
+	OnPlay = 1;
+	socket.emit('game-start', {nickname: $("#nickname").val() });
+//    $("#start-screen").hide();
+	// 入力規制
+	document.getElementById('nickname').disabled     = true; // ニックネームフィールド
+	document.getElementById('start_button').disabled = true; // start ボタン
+}
+
+
+let movement = {};
+
+
+// キー入力 処理
+$(document).on('keydown keyup', (event) => {
+    const KeyToCommand = {
+        'ArrowUp': 'forward',
+        'ArrowDown': 'back',
+        'ArrowLeft': 'left',
+        'ArrowRight': 'right',
+    };
+    const command = KeyToCommand[event.key];
+    if(command){
+        if(event.type === 'keydown'){
+            movement[command] = true;
+        }else{ /* keyup */
+            movement[command] = false;
+        }
+        socket.emit('movement', movement);
+    }
+    if(event.key === ' ' && event.type === 'keydown'){
+        socket.emit('shoot');
+    }
+});
+
+
+// 'state' 処理
+socket.on('state', function(players, bullets, walls) {
+	CTX.clearRect(0, 0, Canvas.width, Canvas.height);
+
+	Object.values(players).forEach((player) => {
+		const x = ScreenK * player.x;
+		const y = ScreenK * player.y;
+		CTX.save();
+		CTX.font = '10px Bold Arial';
+		CTX.fillText(player.nickname, x, y + player.height + 25);
+//		CTX.font = '10px Bold Arial';
+		CTX.fillStyle = "gray";
+		CTX.fillText('♥'.repeat(player.maxHealth), x, y + player.height + 10);
+		CTX.fillStyle = "red";
+		CTX.fillText('♥'.repeat(player.health), x, y + player.height + 10);
+		CTX.translate(x + player.width/2, y + player.height/2);
+		CTX.rotate(player.angle);
+		CTX.drawImage(playerImage, 0, 0, playerImage.width, playerImage.height, -player.width/2, -player.height/2, player.width, player.height);
+		CTX.restore();
+
+		if(player.socketId === socket.id){
+			CTX.save();
+			CTX.font = '15px Bold Arial';
+			CTX.fillText('You', x, y - 20);
+			CTX.fillText(player.point + ' point', 20, 40);
+			CTX.restore();
+			// 自分の座標 表示
+			document.getElementById('yourX').innerText = Math.floor(player.x);
+			document.getElementById('yourY').innerText = Math.floor(player.y);
+		}
+	});
+
+	Object.values(bullets).forEach((bullet) => {
+			CTX.beginPath();
+			CTX.arc(ScreenK * bullet.x, ScreenK * bullet.y, bullet.width/2, 0, 2 * Math.PI);
+			CTX.stroke();
+	});
+
+	Object.values(walls).forEach((wall) => {
+		CTX.fillStyle = 'black';
+		CTX.fillRect(ScreenK * wall.x, ScreenK * wall.y, wall.width, wall.height);
+	});
+});
+
+
+// 'dead' 処理
+socket.on('dead', () => {
+	OnPlay = 0;
+//    $("#start-screen").show();
+	// 入力規制 解除
+	document.getElementById('nickname').disabled     = false; // ニックネームフィールド
+	document.getElementById('start_button').disabled = false; // start ボタン
+});
+
+
+// ウィンドウ リサイズ処理
+function resizeWindow(){
+	// 画面比 1:1
+	let scW = document.documentElement.clientWidth - document.getElementById('data_table').offsetWidth -16;
+	let scH = document.documentElement.clientHeight -16;
+//	let k;
+	if( scW > scH ){
+		// 高さ 優先
+		scW = scH;
+//		k   = (document.documentElement.clientHeight - 16)/ 508
+	} else {
+		// 幅 優先
+		scH = scW;
+//		k   = (document.documentElement.clientWidth  -16) / 1108;
+	}
+	const screenWidth  = scW;
+	const screenHeight = scH;
+	const canvas = document.getElementById('stage');
+	canvas.setAttribute( "width" , screenWidth );
+	canvas.setAttribute( "height", screenHeight );
+	// canvas 大きさ設定
+	for(let i=0; i<LayerNames.length; i++){
+		const canvas = document.getElementById(`${LayerNames[i]}-layer`);
+		canvas.setAttribute( "width",  screenWidth );
+		canvas.setAttribute( "height", screenHeight );
+	}
+	CTX.translate(0, 0);
+
+
+	ScreenK = screenWidth / ( 1000 + playerImage.width );
+
+	//
+//	$('#start-screen').width(screenWidth);
+//	$('#start-screen').height(screenHeight);
+
+	// canvas(背景)
+	const canvasBG = document.getElementById('bg-layer');
+	const ctxBG = canvasBG.getContext('2d');
+
+	// 背景描画
+	ctxBG.fillStyle = 'rgb(200, 200, 200)'
+	ctxBG.fillRect(0, 0, canvasBG.width, canvasBG.height);
+
+	// マナビオ ロゴ
+	const logo = new Image();
+	logo.src = "/pics/logo-tate_white.svg";
+	logo.onload = () => {
+		ctxBG.drawImage(logo, Canvas.width-50, Canvas.height-40);
+	};
+
+	// 帯
+	ctxBG.fillStyle = '#2C3C42';
+	ctxBG.fillRect(0, 0, canvasBG.width, 20);
+
+	// 文字 描画
+	ctxBG.fillStyle = 'rgb(255, 255, 255)';
+	ctxBG.font = "12px serif";
+	let text = "Network Communication Program";
+	ctxBG.fillText(text, 10, 15);
+}
+</script>
+</html>
