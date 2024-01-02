@@ -156,7 +156,7 @@ socket.on('state', function(players, bullets, walls) {
 		CTX.fillText('♥'.repeat(player.health), x, y + player.height + 10);
 		CTX.translate(x + player.width/2, y + player.height/2);
 		CTX.rotate(player.angle);
-		CTX.drawImage(playerImage, -(ScreenK * image.width/2), -(ScreenK * image.height/2));
+		CTX.drawImage(playerImage, -(ScreenK * playerImage.width/2), -(ScreenK * playerImage.height/2));
 		CTX.restore();
 
 		if(player.socketId === socket.id){
