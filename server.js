@@ -137,8 +137,8 @@ class Bullet extends GameObject{
 	remove(){
 		delete this.player.bullets[this.id];
 		delete bullets[this.id];
-		if( this.shootNum > 0 ){
-			this.shootNum--;
+		if( this.player.shootNum > 0 ){
+			this.player.shootNum--;
 		}
 	}
 };
