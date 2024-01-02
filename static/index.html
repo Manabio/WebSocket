@@ -85,6 +85,7 @@ const SCctx = SCcanvas.getContext('2d');
 // グローバル 配列
 let   Audios     = [];     // 効果音指定用配列
 const LayerNames = ['click', 'title', 'player', 'border', 'score', 'bg' ];
+let SE = {};
 
 // ウィンドウが開かれたら 事前準備してからloop()に入る
 window.onload = () => {
@@ -95,8 +96,8 @@ window.onload = () => {
 	}
 
 const se_parent=$("body");
-const SE={
-	shoot:new Se(se_parent,"/sounds/cannon1.mp3",3),
+SE={
+	shoot:new   Se(se_parent,"/sounds/cannon1.mp3",3),
 	explose:new Se(se_parent,"/sounds/explose1.mp3",2),
 };
 
