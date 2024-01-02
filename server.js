@@ -254,9 +254,7 @@ setInterval(() => {
 // path 適正化
 app.use('/static', express.static(__dirname + '/static'));
 app.use('/pics',   express.static(__dirname + '/pics'));
-app.use('/audios', express.static(__dirname + '/audios'));
-
-
+app.use('/sounds', express.static(__dirname + '/sounds'));
 
 app.get('/', (request, response) => {
   response.sendFile(path.join(__dirname, '/static/index.html'));
