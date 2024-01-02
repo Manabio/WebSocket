@@ -166,8 +166,8 @@ socket.on('state', function(players, bullets, walls) {
 	// 弾 描画
 	Object.values(bullets).forEach((bullet) => {
 			CTX.beginPath();
-			CTX.arc(ScreenK * bullet.x, ScreenK * bullet.y, bullet.width/2, 0, 2 * Math.PI);
 			CTX.fillStyle = "rgba(255,178,169,0.8)";
+			CTX.arc(ScreenK * bullet.x, ScreenK * bullet.y, bullet.width/2, 0, 2 * Math.PI);
 			CTX.fill();
 	});
 
@@ -212,7 +212,7 @@ function resizeWindow(){
 	}
 	CTX.translate(0, 0);
 
-	ScreenK = screenWidth / ( 1000 + playerImage.height );
+	ScreenK = screenWidth / 1000; //( 1000 + playerImage.height );
 
 	// canvas(背景)
 	const canvasBG = document.getElementById('bg-layer');
