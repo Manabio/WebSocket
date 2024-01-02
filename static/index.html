@@ -156,12 +156,12 @@ socket.on('state', function(players, bullets, walls) {
 			CTX.save();
 			CTX.font = '12px Bold Arial';
 			CTX.fillText('You', x + ScreenK * player.height/2, y - 10);
-			const score_text = String( player.point );
+//			const score_text = String( player.point );
 
 
-let text = SCctx.measureText(String( player.point ));
+const text_length = SCctx.measureText(String( player.point ));
 
-			SCctx.fillText(text, SCcanvas.width -20 - text.width, 40);
+			SCctx.fillText(text, SCcanvas.width -20 - text_length, 40);
 			CTX.restore();
 			// 自分の座標 表示
 			document.getElementById('yourX').innerText = Math.floor(player.x);
