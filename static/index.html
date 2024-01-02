@@ -135,7 +135,8 @@ $(document).on('keydown keyup', (event) => {
 
 // 'state' 処理
 socket.on('state', function(players, bullets, walls) {
-	CTX.clearRect(0, 0, Canvas.width, Canvas.height);
+	CTX.clearRect(0, 0, Canvas.width, Canvas.height);   // プレイヤー用レイヤー 消去
+	SCctx.clearRect(0, 0, Canvas.width, Canvas.height); // スコア用レイヤー     消去
 
 	Object.values(players).forEach((player) => {
 		const x = ScreenK * player.x;
@@ -162,7 +163,7 @@ socket.on('state', function(players, bullets, walls) {
 			CTX.fillText( text, x + ScreenK * (player.height - text_length)/2, y); // You 描画
 			text = String( player.point );
 			text_length = SCctx.measureText(text).width;
-SCctx.fillStyle = 'rgb(255, 255, 255)';
+			SCctx.fillStyle = 'rgb(255, 255, 255)';
 			SCctx.fillText(text, SCcanvas.width -20 - text_length, 15);   // スコア描画
 			CTX.restore();
 			// 自分の座標 表示
