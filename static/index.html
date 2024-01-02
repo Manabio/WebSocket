@@ -83,14 +83,15 @@ const SCctx = SCcanvas.getContext('2d');
 
 
 // グローバル 配列
+const Audios     = [];     // 効果音指定用配列
 const LayerNames = ['click', 'title', 'player', 'border', 'score', 'bg' ];
 
 // ウィンドウが開かれたら 事前準備してからloop()に入る
 window.onload = () => {
 	// 効果音等 事前読込み
-	audios = {"shoot": new Audio("/sounds/cannon1.mp3"), "explose": new Audio("/sounds/explose1.mp3")};
+	Audios = {"shoot": new Audio("/sounds/cannon1.mp3"), "explose": new Audio("/sounds/explose1.mp3")};
 	for(var i in audios){
-		audios[i].load();
+		Audios[i].load();
 	}
 
 	resizeWindow(); // 画面描画
@@ -131,8 +132,8 @@ $(document).on('keydown keyup', (event) => {
 	}
 	if(event.key === ' ' && event.type === 'keydown'){
 		socket.emit('shoot');
-		audios["shoot"].currentTime = 0;
-		audios["shoot"].play(); // 効果音を鳴らす
+		Audios["shoot"].currentTime = 0;
+		Audios["shoot"].play(); // 効果音を鳴らす
 	}
 });
 
