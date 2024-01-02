@@ -90,7 +90,7 @@ const LayerNames = ['click', 'title', 'player', 'border', 'score', 'bg' ];
 window.onload = () => {
 	// 効果音等 事前読込み
 	Audios = {"shoot": new Audio("/sounds/cannon1.mp3"), "explose": new Audio("/sounds/explose1.mp3")};
-	for(var i in audios){
+	for(var i in Audios){
 		Audios[i].load();
 	}
 
