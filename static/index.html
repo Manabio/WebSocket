@@ -153,7 +153,7 @@ socket.on('state', function(players, bullets, walls) {
 		if(player.socketId === socket.id){
 			CTX.save();
 			CTX.font = '14px Bold Arial';
-			CTX.fillText('You', x + ScreenK * player.height/2, y - ScreenK * 10); // You 描画
+			CTX.fillText('You', x + ScreenK * player.height/2, y - ScreenK * 5); // You 描画
 			const text_length = SCctx.measureText(String( player.point ));
 			SCctx.fillText(player.point, SCcanvas.width -20 - text_length, 15);   // スコア描画
 			CTX.restore();
@@ -167,8 +167,8 @@ socket.on('state', function(players, bullets, walls) {
 	Object.values(bullets).forEach((bullet) => {
 			CTX.beginPath();
 			CTX.arc(ScreenK * bullet.x, ScreenK * bullet.y, bullet.width/2, 0, 2 * Math.PI);
-			CTX.fillStyle = "rgba(255,0,0,0.8)" ;
-			CTX.stroke();
+			CTX.fillStyle = "rgba(255,178,169,0.8)";
+			CTX.fill();
 	});
 
 	Object.values(walls).forEach((wall) => {
