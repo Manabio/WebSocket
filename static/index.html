@@ -176,8 +176,8 @@ socket.on('state', function(players, bullets, walls) {
 			// 自分の座標 表示
 			document.getElementById('yourX').innerText = Math.floor(player.x);
 			document.getElementById('yourY').innerText = Math.floor(player.y);
+			OldShootNum = player.shootNum;
 		}
-		OldShootNum = player.shootNum;
 	});
 
 	// 弾 描画
