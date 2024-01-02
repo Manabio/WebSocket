@@ -164,7 +164,7 @@ socket.on('state', function(players, bullets, walls) {
 			CTX.fillStyle = 'rgb(0, 0, 0)';
 			let text = 'You';
 			let text_length = CTX.measureText(text).width;
-			CTX.fillText( text, x + ScreenK * (player.height - text_length)/2, y); // You 描画
+			CTX.fillText( text, x + ScreenK * (player.height - text_length)/2, y + 7); // You 描画
 			text = String( player.point );
 			text_length = SCctx.measureText(text).width;
 			SCctx.font = '12px serif';
