@@ -74,7 +74,6 @@ const playerImage = $('#player_image')[0];
 // グローバル変数定義
 let ScreenK;         // 描画域の倍率
 let ShootNum = 0;    // 発射中の弾数
-let OldShootNum = 0; // 前処理時の弾数
 let OnPlay = 0;      // プレイ中なら1
 
 // canvas名 グローバル変数として定義
@@ -131,8 +130,7 @@ $(document).on('keydown keyup', (event) => {
 	}
 	if(event.key === ' ' && event.type === 'keydown'){
 		socket.emit('shoot');
-		if( ShootNum < 3 ){
-//			OldShootNum = ShootNum;
+		if( ShootNum < 4 ){
 			SE.shoot.play();
 		}
 	}
@@ -163,7 +161,7 @@ socket.on('state', function(players, bullets, walls) {
 		if(player.socketId === socket.id){
 			CTX.save();
 			CTX.font = '14px Bold Arial';
-			SCctx.fillStyle = 'rgb(0, 0, 0)';
+			CTX.fillStyle = 'rgb(0, 0, 0)';
 			let text = 'You';
 			let text_length = CTX.measureText(text).width;
 			CTX.fillText( text, x + ScreenK * (player.height - text_length)/2, y); // You 描画
