@@ -156,12 +156,12 @@ socket.on('state', function(players, bullets, walls) {
 		CTX.fillText('♥'.repeat(player.health), x, y + player.height + 10);
 		CTX.translate(x + player.width/2, y + player.height/2);
 		CTX.rotate(player.angle);
-		CTX.drawImage(playerImage, 0, 0, playerImage.width, playerImage.height, -player.width/2, -player.height/2, player.width, player.height);
+		CTX.drawImage(playerImage, 0, 0, ScreenK * playerImage.width, ScreenK * playerImage.height, -ScreenK * player.width/2, -ScreenK * player.height/2, ScreenK * player.width, ScreenK * player.height);
 		CTX.restore();
 
 		if(player.socketId === socket.id){
 			CTX.save();
-			CTX.font = '15px Bold Arial';
+			CTX.font = '10px Bold Arial';
 			CTX.fillText('You', x, y - 20);
 			CTX.fillText(player.point + ' point', 20, 40);
 			CTX.restore();
@@ -223,7 +223,7 @@ function resizeWindow(){
 	CTX.translate(0, 0);
 
 
-	ScreenK = screenWidth / ( 1000 + playerImage.width );
+	ScreenK = screenWidth / ( 1000 + playerImage.height );
 
 	//
 //	$('#start-screen').width(screenWidth);
@@ -234,7 +234,7 @@ function resizeWindow(){
 	const ctxBG = canvasBG.getContext('2d');
 
 	// 背景描画
-	ctxBG.fillStyle = 'rgb(200, 200, 200)'
+	ctxBG.fillStyle = '#FCEFE2';
 	ctxBG.fillRect(0, 0, canvasBG.width, canvasBG.height);
 
 	// マナビオ ロゴ
