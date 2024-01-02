@@ -73,25 +73,17 @@
 
 // グローバル変数
 const socket = io();
-//const canvas = $('#player-layer')[0];
-//const context = canvas.getContext('2d');
 const playerImage = $('#player_image')[0];
 
 // グローバル変数定義
 let ScreenK;    // 描画域の倍率
 let OnPlay = 0; // プレイ中なら1
 
-// プレイ描画用canvas名 グローバル変数として定義
+// canvas名 グローバル変数として定義
 const Canvas = document.getElementById('player-layer');
 const CTX = Canvas.getContext('2d');
-const CvsClick = document.getElementById('click-layer');
-const CtxClick = CvsClick.getContext('2d');
-const CvsV = document.getElementById('border-layer');
-const CtxV = CvsV.getContext('2d');
-
-// 背景描画用canvas名 グローバル変数として定義
-const BGcanvas = document.getElementById('player-layer');
-const BGctx = BGcanvas.getContext('2d');
+const SCcanvas = document.getElementById('score-layer');
+const SCctx = BGcanvas.getContext('2d');
 
 // グローバル 配列
 const LayerNames = ['click', 'title', 'player', 'border', 'score', 'bg' ];
@@ -106,7 +98,6 @@ window.onload = () => {
 function gameStart(){
 	OnPlay = 1;
 	socket.emit('game-start', {nickname: $("#nickname").val() });
-//    $("#start-screen").hide();
 	// 入力規制
 	document.getElementById('nickname').disabled     = true; // ニックネームフィールド
 	document.getElementById('start_button').disabled = true; // start ボタン
@@ -147,23 +138,30 @@ socket.on('state', function(players, bullets, walls) {
 		const x = ScreenK * player.x;
 		const y = ScreenK * player.y;
 		CTX.save();
-		CTX.font = '10px Bold Arial';
-		CTX.fillText(player.nickname, x, y + player.height + 25);
-//		CTX.font = '10px Bold Arial';
+		CTX.font = '12px Bold Arial';
+		CTX.fillText(player.nickname, x, y + ScreenK * player.height + 15);
 		CTX.fillStyle = "gray";
-		CTX.fillText('♥'.repeat(player.maxHealth), x, y + player.height + 10);
+		CTX.fillText('♥'.repeat(player.maxHealth), x, y + ScreenK * player.height + 10);
 		CTX.fillStyle = "red";
-		CTX.fillText('♥'.repeat(player.health), x, y + player.height + 10);
+		CTX.fillText('♥'.repeat(player.health), x, y + ScreenK * player.height + 10);
 		CTX.translate(x + player.width/2, y + player.height/2);
 		CTX.rotate(player.angle);
+//		CTX.drawImage(playerImage, 0, 0, ScreenK * playerImage.width, ScreenK * playerImage.height, -ScreenK * player.height/2, -ScreenK * player.height/2, ScreenK * player.width, ScreenK * player.height);
 		CTX.drawImage(playerImage, -(ScreenK * playerImage.width/2), -(ScreenK * playerImage.height/2));
+
+
 		CTX.restore();
 
 		if(player.socketId === socket.id){
 			CTX.save();
-			CTX.font = '10px Bold Arial';
-			CTX.fillText('You', x, y - 20);
-			CTX.fillText(player.point + ' point', 20, 40);
+			CTX.font = '12px Bold Arial';
+			CTX.fillText('You', x + ScreenK * player.height/2, y - 10);
+			const score_text = String( player.point );
+
+
+let text = SCctx.measureText(String( player.point ));
+
+			SCctx.fillText(text, SCcanvas.width -20 - text.width, 40);
 			CTX.restore();
 			// 自分の座標 表示
 			document.getElementById('yourX').innerText = Math.floor(player.x);
@@ -171,6 +169,7 @@ socket.on('state', function(players, bullets, walls) {
 		}
 	});
 
+	// 弾 描画
 	Object.values(bullets).forEach((bullet) => {
 			CTX.beginPath();
 			CTX.arc(ScreenK * bullet.x, ScreenK * bullet.y, bullet.width/2, 0, 2 * Math.PI);
@@ -187,7 +186,6 @@ socket.on('state', function(players, bullets, walls) {
 // 'dead' 処理
 socket.on('dead', () => {
 	OnPlay = 0;
-//    $("#start-screen").show();
 	// 入力規制 解除
 	document.getElementById('nickname').disabled     = false; // ニックネームフィールド
 	document.getElementById('start_button').disabled = false; // start ボタン
@@ -199,15 +197,12 @@ function resizeWindow(){
 	// 画面比 1:1
 	let scW = document.documentElement.clientWidth - document.getElementById('data_table').offsetWidth -16;
 	let scH = document.documentElement.clientHeight -16;
-//	let k;
 	if( scW > scH ){
 		// 高さ 優先
 		scW = scH;
-//		k   = (document.documentElement.clientHeight - 16)/ 508
 	} else {
 		// 幅 優先
 		scH = scW;
-//		k   = (document.documentElement.clientWidth  -16) / 1108;
 	}
 	const screenWidth  = scW;
 	const screenHeight = scH;
@@ -222,12 +217,7 @@ function resizeWindow(){
 	}
 	CTX.translate(0, 0);
 
-
 	ScreenK = screenWidth / ( 1000 + playerImage.height );
-
-	//
-//	$('#start-screen').width(screenWidth);
-//	$('#start-screen').height(screenHeight);
 
 	// canvas(背景)
 	const canvasBG = document.getElementById('bg-layer');
@@ -253,6 +243,8 @@ function resizeWindow(){
 	ctxBG.font = "12px serif";
 	let text = "Network Communication Program";
 	ctxBG.fillText(text, 10, 15);
+	let text = "Score";
+	ctxBG.fillText(text, screenWidth - 50, 15);
 }
 </script>
 </html>
