@@ -29,10 +29,14 @@
 					<td></td>
 					<td><button id="start_button" onclick="gameStart();">Start</button></td>
 				</tr>
+				<tr>
+					<td nowrap>ボットの座標</td>
+					<td nowrap>（<span id="botX">0</span>,<span id="botY">0</span>）</td>
+				</tr>
 			</table>
 		</td>
 		<td  width="100%" valign="top" id="Screen">
-		    <img id="player-image" src="/static/player.gif" style="display: none;">
+		    <img id="player_image" src="/static/player.gif" style="display: none;">
 			<div id="stage">
 				<canvas id="click-layer"></canvas>
 				<canvas id="title-layer"></canvas>
@@ -71,7 +75,7 @@
 const socket = io();
 //const canvas = $('#player-layer')[0];
 //const context = canvas.getContext('2d');
-const playerImage = $('#player-image')[0];
+const playerImage = $('#player_image')[0];
 
 // グローバル変数定義
 let ScreenK;    // 描画域の倍率
@@ -219,7 +223,7 @@ function resizeWindow(){
 	CTX.translate(0, 0);
 
 
-	ScreenK = 1000 / screenWidth;
+	ScreenK = (1000 + playerImage.width ) / screenWidth;
 
 	//
 //	$('#start-screen').width(screenWidth);
