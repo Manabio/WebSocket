@@ -154,9 +154,9 @@ socket.on('state', function(players, bullets, walls) {
 			CTX.save();
 			CTX.font = '14px Bold Arial';
 			const text = 'You';
-			const text_length = CTX.measureText(text).width;
+			let text_length = CTX.measureText(text).width;
 			CTX.fillText( text, x + ScreenK * player.height/2 - text_length/2, y - ScreenK * 5); // You 描画
-			const text_length = SCctx.measureText(String( player.point )).width;
+			text_length = SCctx.measureText(String( player.point )).width;
 			SCctx.fillText(player.point, SCcanvas.width -20 - text_length, 15);   // スコア描画
 			CTX.restore();
 			// 自分の座標 表示
