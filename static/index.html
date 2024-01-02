@@ -153,11 +153,12 @@ socket.on('state', function(players, bullets, walls) {
 		if(player.socketId === socket.id){
 			CTX.save();
 			CTX.font = '14px Bold Arial';
-			const text = 'You';
+			let text = 'You';
 			let text_length = CTX.measureText(text).width;
 			CTX.fillText( text, x + ScreenK * (player.height - text_length)/2, y - ScreenK * 2); // You 描画
-			text_length = SCctx.measureText(String( player.point )).width;
-			SCctx.fillText(player.point, SCcanvas.width -20 - text_length, 15);   // スコア描画
+			text = String( player.point );
+			text_length = SCctx.measureText(text).width;
+			SCctx.fillText(text, SCcanvas.width -20 - text_length, 15);   // スコア描画
 			CTX.restore();
 			// 自分の座標 表示
 			document.getElementById('yourX').innerText = Math.floor(player.x);
@@ -168,7 +169,7 @@ socket.on('state', function(players, bullets, walls) {
 	// 弾 描画
 	Object.values(bullets).forEach((bullet) => {
 			CTX.beginPath();
-			CTX.arc(ScreenK * bullet.x, ScreenK * bullet.y, bullet.width/2, 0, 2 * Math.PI);
+			CTX.arc(ScreenK * bullet.x, ScreenK * bullet.y, ScreenK * bullet.width/2, 0, 2 * Math.PI);
 			CTX.fillStyle = "rgba(255,178,169,0.8)";
 			CTX.fill();
 	});
