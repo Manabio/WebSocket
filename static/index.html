@@ -73,8 +73,8 @@ const playerImage = $('#player_image')[0];
 
 // グローバル変数定義
 let ScreenK;          // 描画域の倍率
+let ShootFlag = 0;    // shootキー押下げなら1
 let ShootNum = 0;     // 発射中の弾数
-let ShootNum_old = 0; // 前処理中の弾数
 let OnPlay = 0;       // プレイ中なら1
 
 // canvas名 グローバル変数として定義
@@ -106,6 +106,7 @@ function gameStart(){
 	// 入力規制
 	document.getElementById('nickname').disabled     = true; // ニックネームフィールド
 	document.getElementById('start_button').disabled = true; // start ボタン
+	drawTitle('');  // タイトル消す
 }
 
 
@@ -131,10 +132,12 @@ $(document).on('keydown keyup', (event) => {
 	}
 	if(event.key === ' ' && event.type === 'keydown'){
 		socket.emit('shoot');
-		if( ShootNum > ShootNum_old ){
-			ShootNum_old = ShootNum;
+		if( ShootFlag == 0 && ShootNum < 4){
+			ShootFlag = 1;
 			SE.shoot.play();
 		}
+	} else {
+		ShootFlag = 0;
 	}
 });
 
@@ -202,7 +205,50 @@ socket.on('dead', () => {
 	// 入力規制 解除
 	document.getElementById('nickname').disabled     = false; // ニックネームフィールド
 	document.getElementById('start_button').disabled = false; // start ボタン
+	// 200ms後に開始する非同期処理で音量フェードアウト
+//	const step  = parseFloat( ( audios["BGM"].volume / (4000 / 200)).toFixed(3) );
+	const timerid = setInterval(()=>{
+		// 最低音量に到達したらタイマー停止
+//		if( (audios["BGM"].volume - step) <= 0 ){
+//			audios["BGM"].volume = 0;    // 最後の音量は決め打ち
+//			audios["BGM"].pause();                  // 再生を停止
+//			clearInterval(timerid);         // タイマー解除
+			drawTitle('title');
+		} else {
+//			audios["BGM"].volume -= step;
+		}
+    }, 200);
+	drawTitle('gameOver'); // タイトル描画
 });
+
+
+function drawTitle(mode){
+	const canvasTitle = document.getElementById('title-layer');
+	const c = canvasTitle.getContext('2d');
+	c.clearRect( 0, 0, canvasTitle.width, canvasTitle.height); // 消す
+	let text;
+	// 文字 描画
+	switch(mode){
+		case 'title':
+			text = "Battle Field";
+			break;
+
+		case 'gameOver':
+			text = "Game Over";
+			break;
+
+		default:
+			text = "";
+			break;
+	}
+	c.fillStyle = 'rgb(255, 255, 255)';
+	c.font = "30px serif";
+	const mesure = c.measureText( text );
+	const textWidth  = mesure.width;
+	const textHeight = mesure.actualBoundingBoxAscent + mesure.actualBoundingBoxDescent;
+	c.fillText( text, (canvasTitle.width / 2) - textWidth / 2, canvasTitle.height / 2);
+}
+
 
 
 // ウィンドウ リサイズ処理
