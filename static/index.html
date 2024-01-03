@@ -32,7 +32,7 @@
 			</table>
 		</td>
 		<td  width="100%" valign="top" id="Screen">
-		    <img id="player_image" src="/static/player.svg" style="display: none;">
+		    <img id="player_image" src="/pics/player.svg" style="display: none;">
 			<div id="stage">
 				<canvas id="click-layer"></canvas>
 				<canvas id="title-layer"></canvas>
@@ -304,7 +304,7 @@ function resizeWindow(){
 	const logo = new Image();
 	logo.src = "/pics/logo-tate.svg";
 	logo.onload = () => {
-		ctxBG.drawImage(logo, Canvas.width-50, Canvas.height-40);
+		ctxBG.drawImage(logo, Canvas.width-logo.width-10, Canvas.height-logo.height-10);
 	};
 
 	// 帯
