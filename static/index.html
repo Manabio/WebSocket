@@ -171,7 +171,7 @@ socket.on('state', function(players, bullets, walls) {
 		CTX.fillText('♥'.repeat(player.maxHealth), x, y + ScreenK * (player.height + 5));
 		CTX.fillStyle = "red";
 		CTX.fillText('♥'.repeat(player.health), x, y + ScreenK * (player.height + 5));
-		CTX.translate(x + player.width/2, y + player.height/2);
+		CTX.translate(x + player.height/2, y + player.height/2);
 		CTX.rotate(player.angle);
 		CTX.drawImage(playerImage, -(ScreenK * playerImage.width/2), -(ScreenK * playerImage.height/2));
 		CTX.restore();
@@ -219,16 +219,16 @@ socket.on('dead', () => {
 	document.getElementById('nickname').disabled     = false; // ニックネームフィールド
 	document.getElementById('start_button').disabled = false; // start ボタン
 	// 200ms後に開始する非同期処理で音量フェードアウト
-	const step  = parseFloat( ( audios["BGM"].volume / (4000 / 200)).toFixed(3) );
+	const step = parseFloat( ( Audios["BGM"].volume / (4000 / 200)).toFixed(3) );
 	const timerid = setInterval(()=>{
 		// 最低音量に到達したらタイマー停止
-		if( (audios["BGM"].volume - step) <= 0 ){
-			audios["BGM"].volume = 0;    // 最後の音量は決め打ち
-			audios["BGM"].pause();                  // 再生を停止
+		if( (Audios["BGM"].volume - step) <= 0 ){
+			Audios["BGM"].volume = 0;    // 最後の音量は決め打ち
+			Audios["BGM"].pause();                  // 再生を停止
 			clearInterval(timerid);         // タイマー解除
 			drawTitle('title');
 		} else {
-			audios["BGM"].volume -= step;
+			Audios["BGM"].volume -= step;
 		}
     }, 200);
 	drawTitle('gameOver'); // タイトル描画
