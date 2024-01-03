@@ -304,7 +304,7 @@ function resizeWindow(){
 	const logo = new Image();
 	logo.src = "/pics/logo-tate.svg";
 	logo.onload = () => {
-		ctxBG.drawImage(logo, Canvas.width-logo.width-10, Canvas.height-logo.height-10);
+		ctxBG.drawImage(logo, Canvas.width-logo.width-10, Canvas.height-logo.height-10, logo.width/2, logo.height/2);
 	};
 
 	// 帯
