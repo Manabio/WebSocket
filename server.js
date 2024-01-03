@@ -20,7 +20,6 @@ class GameObject{
 		this.width  = obj.width;
 		this.height = obj.height;
 		this.angle  = obj.angle;
-		this.shootNum = 0;
 	}
 
 	// 移動
@@ -61,7 +60,7 @@ class GameObject{
 	}
 
 	toJSON(){
-		return {id: this.id, x: this.x, y: this.y, width: this.width, height: this.height, angle: this.angle, shootNum: this,shootNum};
+		return {id: this.id, x: this.x, y: this.y, width: this.width, height: this.height, angle: this.angle};
 	}
 };
 
@@ -77,6 +76,7 @@ class Player extends GameObject{
 		this.bullets  = {};
 		this.point    = 0;
 		this.movement = {};
+		this.shootNum = 0;
 
 		do{
 			this.x = Math.random() * (FIELD_WIDTH  - this.width);
@@ -100,7 +100,7 @@ class Player extends GameObject{
 		bullet.move(this.width/2);
 		this.bullets[bullet.id] = bullet;
 		bullets[bullet.id] = bullet;
-		this.shootNum = Object.keys(this.bullets).length;
+//		this.shootNum = Object.keys(this.bullets).length;
 	}
 
 	// 'damage'を受けとった時
@@ -119,7 +119,7 @@ class Player extends GameObject{
 
 	// JSON 記録
 	toJSON(){
-		return Object.assign(super.toJSON(), {health: this.health, maxHealth: this.maxHealth, socketId: this.socketId, point: this.point, nickname: this.nickname});
+		return Object.assign(super.toJSON(), {health: this.health, maxHealth: this.maxHealth, socketId: this.socketId, point: this.point, nickname: this.nickname, shootNum: this,shootNum});
 	}
 };
 
