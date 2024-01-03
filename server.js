@@ -61,7 +61,7 @@ class GameObject{
 	}
 
 	toJSON(){
-		return {id: this.id, x: this.x, y: this.y, width: this.width, height: this.height, angle: this.angle};
+		return {id: this.id, x: this.x, y: this.y, width: this.width, height: this.height, angle: this.angle, shootNum: this,shootNum};
 	}
 };
 
@@ -119,7 +119,7 @@ class Player extends GameObject{
 
 	// JSON 記録
 	toJSON(){
-		return Object.assign(super.toJSON(), {health: this.health, maxHealth: this.maxHealth, socketId: this.socketId, point: this.point, nickname: this.nickname, shootNum: this,shootNum});
+		return Object.assign(super.toJSON(), {health: this.health, maxHealth: this.maxHealth, socketId: this.socketId, point: this.point, nickname: this.nickname});
 	}
 };
 
