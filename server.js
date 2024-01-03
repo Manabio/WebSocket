@@ -76,6 +76,7 @@ class Player extends GameObject{
 		this.bullets  = {};
 		this.point    = 0;
 		this.movement = {};
+		this.shootable = 0; // shoot可:0、不可:1
 
 		do{
 			this.x = Math.random() * (FIELD_WIDTH  - this.width);
@@ -88,8 +89,10 @@ class Player extends GameObject{
 	shoot(){
 		// 同時 発射は３発まで
 		if(Object.keys(this.bullets).length >= 3){
+			Object.keys(this.shootable).value = 1;
 			return; // ３発越えは速リターン
 		}
+		Object.keys(this.shootable).value = 0;
 		const bullet = new Bullet({
 			x: this.x + this.width/2,
 			y: this.y + this.height/2,
@@ -117,7 +120,7 @@ class Player extends GameObject{
 
 	// JSON 記録
 	toJSON(){
-		return Object.assign(super.toJSON(), {health: this.health, maxHealth: this.maxHealth, socketId: this.socketId, point: this.point, nickname: this.nickname});
+		return Object.assign(super.toJSON(), {health: this.health, maxHealth: this.maxHealth, socketId: this.socketId, point: this.point, nickname: this.nickname, shootable: this.shootable});
 	}
 };
 
