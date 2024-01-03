@@ -100,7 +100,7 @@ class Player extends GameObject{
 		bullet.move(this.width/2);
 		this.bullets[bullet.id] = bullet;
 		bullets[bullet.id] = bullet;
-		this.shootNnum = Object.keys(this.bullets).length;
+		this.shootNum = Object.keys(this.bullets).length;
 	}
 
 	// ダメージ
