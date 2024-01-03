@@ -192,7 +192,6 @@ socket.on('state', function(players, bullets, walls) {
 			// 自分の座標 表示
 			document.getElementById('yourX').innerText = Math.floor(player.x);
 			document.getElementById('yourY').innerText = Math.floor(player.y);
-			ShootNum = player.keys(this.bullets).length;
 		}
 	});
 
@@ -203,6 +202,8 @@ socket.on('state', function(players, bullets, walls) {
 			CTX.fillStyle = "rgba(255,178,169,0.8)";
 			CTX.fill();
 	});
+	ShootNum = Object.keys(this.bullets).length;
+
 
 	// 壁 描画
 	Object.values(walls).forEach((wall) => {
