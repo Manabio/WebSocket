@@ -93,8 +93,8 @@ let SE = {};
 window.onload = () => {
 	// 効果音等 事前読込み
 	Audios = {"BGM": new Audio("/sounds/nc186397.mp3")};
-	for(var i in audios){
-		audios[i].load();
+	for(var i in Audios){
+		Audios[i].load();
 	}
 
 	// 効果音（連射対応）
