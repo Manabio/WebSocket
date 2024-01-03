@@ -85,17 +85,27 @@ const SCctx = SCcanvas.getContext('2d');
 
 
 // グローバル 配列
+let Audios = {};
 const LayerNames = ['click', 'title', 'player', 'border', 'score', 'bg' ];
 let SE = {};
 
 // ウィンドウが開かれたら 事前準備してからloop()に入る
 window.onload = () => {
+	// 効果音等 事前読込み
+	Audios = {"BGM": new Audio("/sounds/nc186397.mp3")};
+	for(var i in audios){
+		audios[i].load();
+	}
+
+	// 効果音（連射対応）
 	const se_parent=$("body");
 	SE={
 		shoot:new   Se(se_parent,"/sounds/cannon1.mp3",3),
 		explose:new Se(se_parent,"/sounds/explose1.mp3",2),
 	};
-	resizeWindow(); // 画面描画
+	resizeWindow();     // 画面描画
+	drawTitle('title'); // タイトル描画
+
 };
 
 
@@ -106,6 +116,9 @@ function gameStart(){
 	// 入力規制
 	document.getElementById('nickname').disabled     = true; // ニックネームフィールド
 	document.getElementById('start_button').disabled = true; // start ボタン
+	Audios["BGM"].loop = true;  // ループ再生
+	Audios["BGM"].volume = 1;   // BGM音量
+	Audios["BGM"].play();       // BGM再生開始
 	drawTitle('');  // タイトル消す
 }
 
@@ -206,17 +219,17 @@ socket.on('dead', () => {
 	document.getElementById('nickname').disabled     = false; // ニックネームフィールド
 	document.getElementById('start_button').disabled = false; // start ボタン
 	// 200ms後に開始する非同期処理で音量フェードアウト
-//	const step  = parseFloat( ( audios["BGM"].volume / (4000 / 200)).toFixed(3) );
+	const step  = parseFloat( ( audios["BGM"].volume / (4000 / 200)).toFixed(3) );
 	const timerid = setInterval(()=>{
 		// 最低音量に到達したらタイマー停止
-//		if( (audios["BGM"].volume - step) <= 0 ){
-//			audios["BGM"].volume = 0;    // 最後の音量は決め打ち
-//			audios["BGM"].pause();                  // 再生を停止
-//			clearInterval(timerid);         // タイマー解除
+		if( (audios["BGM"].volume - step) <= 0 ){
+			audios["BGM"].volume = 0;    // 最後の音量は決め打ち
+			audios["BGM"].pause();                  // 再生を停止
+			clearInterval(timerid);         // タイマー解除
 			drawTitle('title');
-//		} else {
-//			audios["BGM"].volume -= step;
-//		}
+		} else {
+			audios["BGM"].volume -= step;
+		}
     }, 200);
 	drawTitle('gameOver'); // タイトル描画
 	
@@ -242,7 +255,7 @@ function drawTitle(mode){
 			text = "";
 			break;
 	}
-	c.fillStyle = 'rgb(255, 255, 255)';
+	c.fillStyle = '#0C244A';
 	c.font = "30px serif";
 	const mesure = c.measureText( text );
 	const textWidth  = mesure.width;
@@ -277,7 +290,7 @@ function resizeWindow(){
 	}
 	CTX.translate(0, 0);
 
-	ScreenK = screenWidth / 1000; //( 1000 + playerImage.height );
+	ScreenK = screenWidth / 1000;
 
 	// canvas(背景)
 	const canvasBG = document.getElementById('bg-layer');
@@ -289,19 +302,19 @@ function resizeWindow(){
 
 	// マナビオ ロゴ
 	const logo = new Image();
-	logo.src = "/pics/logo-tate_white.svg";
+	logo.src = "/pics/logo-tate.svg";
 	logo.onload = () => {
 		ctxBG.drawImage(logo, Canvas.width-50, Canvas.height-40);
 	};
 
 	// 帯
-	ctxBG.fillStyle = '#2C3C42';
+	ctxBG.fillStyle = '#0C244A';
 	ctxBG.fillRect(0, 0, canvasBG.width, 20);
 
 	// 文字 描画
 	ctxBG.fillStyle = 'rgb(255, 255, 255)';
 	ctxBG.font = "12px serif";
-	let text = "Network Communication Program";
+	let text = "Battle Field";
 	ctxBG.fillText(text, 10, 15);
 	text = "Score";
 	ctxBG.fillText(text, screenWidth - 150, 15);
