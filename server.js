@@ -20,6 +20,7 @@ class GameObject{
 		this.width  = obj.width;
 		this.height = obj.height;
 		this.angle  = obj.angle;
+		this.shootNum = 0;
 	}
 
 	// 移動
@@ -76,7 +77,6 @@ class Player extends GameObject{
 		this.bullets  = {};
 		this.point    = 0;
 		this.movement = {};
-		this.shootNum = 0;
 
 		do{
 			this.x = Math.random() * (FIELD_WIDTH  - this.width);
@@ -85,7 +85,7 @@ class Player extends GameObject{
 		}while(this.intersectWalls());
 	}
 
-	// 
+	// 'shoot'を受けとった時
 	shoot(){
 		// 同時 発射は３発まで
 		if(Object.keys(this.bullets).length >= 3){
@@ -103,7 +103,7 @@ class Player extends GameObject{
 		this.shootNum = Object.keys(this.bullets).length;
 	}
 
-	// ダメージ
+	// 'damage'を受けとった時
 	damage(){
 		this.health--;
 		if(this.health === 0){ // HP=0ならプレイ終了
