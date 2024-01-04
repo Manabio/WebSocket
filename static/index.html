@@ -29,6 +29,10 @@
 					<td></td>
 					<td><button id="start_button" onclick="gameStart();">Start</button></td>
 				</tr>
+				<tr>
+					<td>砲撃可否</td>
+					<td><span id ="shootbale">0</span></td>
+				</tr>
 			</table>
 		</td>
 		<td  width="100%" valign="top" id="Screen">
@@ -193,6 +197,11 @@ socket.on('state', function(players, bullets, walls) {
 			document.getElementById('yourX').innerText = Math.floor(player.x);
 			document.getElementById('yourY').innerText = Math.floor(player.y);
 			Shootable = player.shootable;
+			if( Shootable == 0 ){
+				document.getElementById('shootable').innerText = 'OK';
+			} else {
+				document.getElementById('shootable').innerText = 'NG';
+			}
 		}
 	});
 
