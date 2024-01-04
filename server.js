@@ -89,7 +89,7 @@ class Player extends GameObject{
 	shoot(){
 		// 同時 発射は３発まで
 		if(Object.keys(this.bullets).length >= 3){
-			Object.keys(this.shootable) = 1;
+			Object.keys(this.shootable).value = 1;
 			return; // ３発越えは速リターン
 		}
 		Object.keys(this.shootable).value = 0;
