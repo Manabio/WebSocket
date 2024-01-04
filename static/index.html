@@ -74,7 +74,7 @@ const playerImage = $('#player_image')[0];
 // グローバル変数定義
 let ScreenK;          // 描画域の倍率
 let ShootFlag = 0;    // shootキー押下げなら1
-let ShootNum = 0;     // 発射中の弾数
+let Shootable = 0;    // 0：発射可, 
 let OnPlay = 0;       // プレイ中なら1
 
 // canvas名 グローバル変数として定義
@@ -145,7 +145,7 @@ $(document).on('keydown keyup', (event) => {
 	}
 	if(event.key === ' ' && event.type === 'keydown'){
 		socket.emit('shoot');
-		if( ShootFlag == 0 && ShootNum < 4){
+		if( ShootFlag == 0 && Shootable == 0 ){
 			ShootFlag = 1;
 			SE.shoot.play();
 		}
@@ -192,17 +192,18 @@ socket.on('state', function(players, bullets, walls) {
 			// 自分の座標 表示
 			document.getElementById('yourX').innerText = Math.floor(player.x);
 			document.getElementById('yourY').innerText = Math.floor(player.y);
+			Shootable = this.shootable;
 		}
 	});
 
 	// 弾 描画
+	let myBullets = 0; // 自分の弾数カウント
 	Object.values(bullets).forEach((bullet) => {
 			CTX.beginPath();
 			CTX.arc(ScreenK * bullet.x, ScreenK * bullet.y, ScreenK * bullet.width/2, 0, 2 * Math.PI);
 			CTX.fillStyle = "rgba(255,178,169,0.8)";
 			CTX.fill();
 	});
-	ShootNum = Object.values(bullets).length;
 
 
 	// 壁 描画
