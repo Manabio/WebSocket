@@ -133,10 +133,11 @@ class Bullet extends GameObject{
 		this.player = obj.player;
 	}
 
-	// 移動
+	// 削除
 	remove(){
 		delete this.player.bullets[this.id];
 		delete bullets[this.id];
+		this.player.shootable = 0;
 	}
 };
 
