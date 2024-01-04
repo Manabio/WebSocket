@@ -121,7 +121,7 @@ function gameStart(){
 	document.getElementById('nickname').disabled     = true; // ニックネームフィールド
 	document.getElementById('start_button').disabled = true; // start ボタン
 	Audios["BGM"].loop = true;  // ループ再生
-	Audios["BGM"].volume = 1;   // BGM音量
+	Audios["BGM"].volume = 0.2;   // BGM音量
 	Audios["BGM"].play();       // BGM再生開始
 	drawTitle('');  // タイトル消す
 }
@@ -234,9 +234,9 @@ socket.on('dead', () => {
 	const timerid = setInterval(()=>{
 		// 最低音量に到達したらタイマー停止
 		if( (Audios["BGM"].volume - step) <= 0 ){
-			Audios["BGM"].volume = 0;    // 最後の音量は決め打ち
-			Audios["BGM"].pause();                  // 再生を停止
-			clearInterval(timerid);         // タイマー解除
+			Audios["BGM"].volume = 0; // 最後の音量は決め打ち
+			Audios["BGM"].pause();    // 再生を停止
+			clearInterval(timerid);   // タイマー解除
 			drawTitle('title');
 		} else {
 			Audios["BGM"].volume -= step;
