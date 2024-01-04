@@ -121,7 +121,7 @@ function gameStart(){
 	document.getElementById('nickname').disabled     = true; // ニックネームフィールド
 	document.getElementById('start_button').disabled = true; // start ボタン
 	Audios["BGM"].loop = true;  // ループ再生
-	Audios["BGM"].volume = 0.2;   // BGM音量
+	Audios["BGM"].volume = 0.2; // BGM音量
 	Audios["BGM"].play();       // BGM再生開始
 	drawTitle('');  // タイトル消す
 }
@@ -226,9 +226,6 @@ socket.on('state', function(players, bullets, walls) {
 // 'dead' 処理
 socket.on('dead', () => {
 	OnPlay = 0;
-	// 入力規制 解除
-	document.getElementById('nickname').disabled     = false; // ニックネームフィールド
-	document.getElementById('start_button').disabled = false; // start ボタン
 	// 200ms後に開始する非同期処理で音量フェードアウト
 	const step = parseFloat( ( Audios["BGM"].volume / (4000 / 200)).toFixed(3) );
 	const timerid = setInterval(()=>{
@@ -243,6 +240,9 @@ socket.on('dead', () => {
 		}
     }, 200);
 	drawTitle('gameOver'); // タイトル描画
+	// 入力規制 解除
+	document.getElementById('nickname').disabled     = false; // ニックネームフィールド
+	document.getElementById('start_button').disabled = false; // start ボタン
 	
 });
 
