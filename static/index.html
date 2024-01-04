@@ -31,7 +31,7 @@
 				</tr>
 				<tr>
 					<td>砲撃可否</td>
-					<td><span id ="shootbale">0</span></td>
+					<td><span id ="shootable">0</span></td>
 				</tr>
 			</table>
 		</td>
@@ -315,7 +315,7 @@ function resizeWindow(){
 	const logo = new Image();
 	logo.src = "/pics/logo-tate.svg";
 	logo.onload = () => {
-		ctxBG.drawImage(logo, Canvas.width-logo.width-10, Canvas.height-logo.height-10, logo.width/2, logo.height/2);
+		ctxBG.drawImage(logo, Canvas.width-logo.width-10, Canvas.height-logo.height-10, logo.width*0.66, logo.height*0.66);
 	};
 
 	// 帯
