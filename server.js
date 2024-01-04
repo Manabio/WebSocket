@@ -92,7 +92,7 @@ class Player extends GameObject{
 			this.shootable = 1;
 			return; // ３発越えは速リターン
 		}
-		Object.keys(this.shootable).value = 0;
+		this.shootable = 0;
 		const bullet = new Bullet({
 			x: this.x + this.width/2,
 			y: this.y + this.height/2,
