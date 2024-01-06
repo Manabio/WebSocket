@@ -30,7 +30,7 @@ class GameObject{
 		this.y += disyance * Math.sin(this.angle);
 
 		let collision = false;
-		if(this.x < O ll this.x + this.width >= FIELD_WIDTH ll this.y < O ll this.y + this.height >= FIELD_HEIGHT){
+		if(this.x < O || this.x + this.width >= FIELD_WIDTH || this.y < O || this.y + this.height >= FIELD_HEIGHT){
 		collision = true;
 	}
 	if(this.intersectWalls()){
