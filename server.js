@@ -101,7 +101,7 @@ class Player extends GameObject{
 	});
 	bullet.move(this.width/2);	
 	this.bullets[bullet.id] = bullet;
-	bullets[bullrts.id] = bullet;
+	bullets[bullet.id] = bullet;
 	}
 
 	// 'damage'を受けとった時
