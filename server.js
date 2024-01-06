@@ -99,7 +99,7 @@ class Player extends GameObject{
 		angle: this.angle,
 		player: this,
 	});
-	bullet.move(yhis.width/2);	
+	bullet.move(this.width/2);	
 	this.bullets[bullet.id] = bullet;
 	bullets[bullrts.id] = bullet;
 	}
