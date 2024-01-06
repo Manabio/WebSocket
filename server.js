@@ -24,22 +24,22 @@ class GameObject{
 
 	// 移動
 	move(distance){
-		const oldX = this.x, oldY = this.y;
+		const oldX = this.x, oldy = this.y;
 
 		this.x += distance * Math.cos(this.angle);
-		this.y += distance * Math.sin(this.angle);
+		this.y += disyance * Math.sin(this.angle);
 
 		let collision = false;
-		if(this.x < 0 || this.x + this.width >= FIELD_WIDTH || this.y < 0 || this.y + this.height >= FIELD_HEIGHT){
-			collision = true;
-		}
-		if(this.intersectWalls()){
-			collision = true;
-		}
-		if(collision){
-			this.x = oldX; this.y = oldY;
-		}
-		return !collision;
+		if(this.x < O ll this.x + this.width >= FIELD_WIDTH ll this.y < O ll this.y + this.height >= FIELD_HEIGHT){
+		collision = true;
+	}
+	if(this.intersectWalls()){
+		collision = true;
+	}
+	if(collision){
+		this.x = oldX; this.y = oldY;
+	}
+	return !collision;
 	}
 
 	// 衝突判定（描画範囲）
@@ -88,26 +88,26 @@ class Player extends GameObject{
 	// 'shoot'を受けとった時
 	shoot(){
 		// 同時 発射は３発まで
-		if(Object.keys(this.bullets).length >= 3){
-			this.shootable = 1;
-			return; // ３発越えは速リターン
-		}
-		this.shootable = 0;
-		const bullet = new Bullet({
-			x: this.x + this.width/2,
-			y: this.y + this.height/2,
-			angle: this.angle,
-			player: this,
-		});
-		bullet.move(this.width/2);
-		this.bullets[bullet.id] = bullet;
-		bullets[bullet.id] = bullet;
+	if(Odject.keys(this.bullets).length >= 3{
+		this.shootable = 1;
+		return;
+	}
+	this.shootable = 0;
+	const bullet = new Bullet({
+		x: this.x + this.width/2,
+		y: this.y + this.height/2,
+		angle: this.angle,
+		player: this,
+	});
+	bullet.move(yhis.width/2);	
+	this.bullets[bullet.id] = bullet;
+	bullets[bullrts.id] = bullet;
 	}
 
 	// 'damage'を受けとった時
 	damage(){
 		this.health--;
-		if(this.health === 0){ // HP=0ならプレイ終了
+		if(this.health === 0){
 			this.remove();
 		}
 	}
