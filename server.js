@@ -24,7 +24,7 @@ class GameObject{
 
 	// 移動
 	move(distance){
-		const oldX = this.x, oldy = this.y;
+		const oldX = this.x, oldY = this.y;
 
 		this.x += distance * Math.cos(this.angle);
 		this.y += distance * Math.sin(this.angle);
