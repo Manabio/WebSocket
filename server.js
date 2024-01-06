@@ -88,7 +88,7 @@ class Player extends GameObject{
 	// 'shoot'を受けとった時
 	shoot(){
 		// 同時 発射は３発まで
-	if(Odject.keys(this.bullets).length >= 3{
+	if(Odject.keys(this.bullets).length >= 3){
 		this.shootable = 1;
 		return;
 	}
