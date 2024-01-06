@@ -27,7 +27,7 @@ class GameObject{
 		const oldX = this.x, oldy = this.y;
 
 		this.x += distance * Math.cos(this.angle);
-		this.y += disyance * Math.sin(this.angle);
+		this.y += distance * Math.sin(this.angle);
 
 		let collision = false;
 		if(this.x < O || this.x + this.width >= FIELD_WIDTH || this.y < O || this.y + this.height >= FIELD_HEIGHT){
