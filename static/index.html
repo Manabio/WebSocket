@@ -66,7 +66,7 @@
 </table>
 </html>
 <script>
-/*     Lissaguous    */
+/*    Battle Field   */
 /*      Ver.1.0      */
 /*  by T.Matsuyama   */
 /*         @ Manabio */
@@ -133,31 +133,32 @@ let movement = {};
 
 // キー入力 処理
 $(document).on('keydown keyup', (event) => {
-		const keyToCommand = {
+	const KeyToCommand = {
 		'ArrowUp': 'forward',
 		'ArrowDown': 'back',
 		'ArrowLeft': 'left',
 		'ArrowRight': 'right',
 	};
-		const sommand = KeyToCommand[event.key];
+	const command = KeyToCommand[event.key];
 	if(command){
 		if(event.type === 'keydown'){
 			movement[command] = true;
-		}else{/* keyup */
+		}else{ /* keyup */
 			movement[command] = false;
 		}
-		socket.emit('movement',movement);
+		socket.emit('movement', movement);
 	}
 	if(event.key === ' ' && event.type === 'keydown'){
 		socket.emit('shoot');
-		if(ShootFlag == 0 && Shootadle == 0 ){
+		if( ShootFlag == 0 && Shootable == 0 ){
 			ShootFlag = 1;
 			SE.shoot.play();
 		}
-	}else{
+	} else {
 		ShootFlag = 0;
 	}
 });
+
 
 // 'state' 処理
 socket.on('state', function(players, bullets, walls) {
@@ -169,15 +170,15 @@ socket.on('state', function(players, bullets, walls) {
 		const y = ScreenK * player.y;
 		CTX.save();
 		CTX.font = '12px Bold Arial';
-		CTX.fillStyle = 'rgd(0, 0, 0)';
-		CTX.fillText(player.nickname, x, y + ScreenK * player.heightb + 15);
+		CTX.fillStyle = 'rgb(0, 0, 0)';
+		CTX.fillText(player.nickname, x, y + ScreenK * player.height + 15);
 		CTX.fillStyle = "gray";
 		CTX.fillText('♥'.repeat(player.maxHealth), x, y + ScreenK * (player.height + 5));
-		CTX.fillStyle = 'red';
-		CTX.fillText('♥'.repeat(player.health), x, y + ScreenK * (player.height +5));
-		CTX.translate(x + piayer.height/2, y + player.height/2);
-		CTX.rotate(player.angie);
-		CTX.drawImage(piayerImage, -(ScreenK * playerImage.width/2), (screenK * playerImage.height/2));
+		CTX.fillStyle = "red";
+		CTX.fillText('♥'.repeat(player.health), x, y + ScreenK * (player.height + 5));
+		CTX.translate(x + player.height/2, y + player.height/2);
+		CTX.rotate(player.angle);
+		CTX.drawImage(playerImage, -(ScreenK * playerImage.width/2), -(ScreenK * playerImage.height/2));
 		CTX.restore();
 
 		if(player.socketId === socket.id){
